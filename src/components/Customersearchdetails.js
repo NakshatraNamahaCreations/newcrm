@@ -235,7 +235,7 @@ function Customersearchdetails() {
     const ct=contractType==="AMC" ?firstDateamt :dateofService;
     const ext=contractType==="AMC" ?expiryDateamt :dateofService;
     const af=contractType==="AMC" ?amtFrequency:1;
-    console.log("ct-----",ct)
+
   const sAmtDate = moment(ct, "YYYY-MM-DD");
   const eamtDate = moment(expiryDateamt, "YYYY-MM-DD");
 
@@ -298,7 +298,7 @@ function Customersearchdetails() {
             dividedDates: dividedDates,
             dividedamtDates: dividedamtDates,
             dividedamtCharges: dividedamtCharges,
-            cardNo: id,
+   
             dCategory: customerdata[0].category,
             category: category,
             contractType: contractType,
@@ -326,7 +326,7 @@ function Customersearchdetails() {
         if (whatsappdata.length > 0) {
           // Assuming you want the first item from whatsappdata for the API call
           const selectedResponse = whatsappdata[0];
-          makeApiCall(selectedResponse, customerdata[0]?.mainContact);
+          // makeApiCall(selectedResponse, customerdata[0]?.mainContact);
 
           await axios(config).then(function (response) {
             if (response.status === 200) {

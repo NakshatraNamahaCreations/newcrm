@@ -47,7 +47,6 @@ function Paymentfilterlist() {
     }
   };
 
-
   useEffect(() => {
     getAlldata();
   }, [treatmentData]);
@@ -207,6 +206,8 @@ function Paymentfilterlist() {
     }
   };
 
+  console.log("selectedData", searchResults);
+
   return (
     <div className="web">
       <Header />
@@ -228,7 +229,7 @@ function Paymentfilterlist() {
       </div>
       <div className="row m-auto">
         <div className="col-md-12">
-          <table style={{ width: "113%" }}  class=" table-bordered mt-1">
+          <table style={{ width: "113%" }} class=" table-bordered mt-1">
             <thead className="">
               <tr className="table-secondary">
                 <th className="table-head" scope="col"></th>
@@ -359,7 +360,7 @@ function Paymentfilterlist() {
                 </th>
               </tr>
             </thead>
-            <tbody >
+            <tbody>
               {searchResults.map((selectedData) => (
                 <tr
                   className="user-tbale-body"
@@ -567,7 +568,7 @@ function Paymentfilterlist() {
                           <p style={{ color: "red" }}> Raise Invoice</p>
                         </Link>
                         <b></b>
-                        {selectedData?.paymentMode === "Online" ? (
+                        {/* {selectedData?.paymentMode === "Online" ? (
                           <td>
                             {" "}
                             <a onClick={() => confirm(selectedData?._id)}>
@@ -594,7 +595,19 @@ function Paymentfilterlist() {
                               )}
                             </b>
                           </td>
-                        )}
+                        )} */}
+                        {fddata(selectedData?._id).map((item, index) => (
+                          <div>
+                            {item.jobComplete === "YES" ? (
+                              <a onClick={() => confirm(selectedData?._id)}>
+                                <p style={{ color: "orange" }}>Confirm</p>
+                              </a>
+                            ) : (
+                              ""
+                            )}{" "}
+                            <div>{}</div>
+                          </div>
+                        ))}
                       </>
                     )}
                   </td>

@@ -222,6 +222,7 @@ function Dsrcallist() {
       (item) =>
         item.serviceInfo[0]?._id === service._id && item.serviceDate == date
     );
+
     return filterStartTime[0]?.jobComplete;
   };
 
@@ -455,15 +456,16 @@ function Dsrcallist() {
                   className="user-tbale-body"
                   key={index}
                   style={{
-                    backgroundColor: SERVICECOMPLETED(selectedData)
-                      ? "#4caf50"
-                      : SERVICESTARTED(selectedData)
-                      ? "#ffeb3b"
-                      : passfunction(selectedData)
-                      ? "#e2e3e5"
-                      : SERVICECOMPLETEDBYOP(selectedData)
-                      ? "rgb(244, 67, 54)"
-                      : "",
+                    backgroundColor:
+                      SERVICECOMPLETEDBYOP(selectedData) === "YES"
+                        ? "rgb(182, 96, 255)"
+                        : SERVICECOMPLETED(selectedData)
+                        ? "#4caf50"
+                        : SERVICESTARTED(selectedData)
+                        ? "#ffeb3b"
+                        : passfunction(selectedData)
+                        ? "#e2e3e5"
+                        : "",
                   }}
                 >
                   <Link

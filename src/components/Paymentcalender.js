@@ -109,6 +109,8 @@ function Paymentcalender() {
     count: eventCounts[date],
   }));
 
+  console.log("myEventsList",myEventsList)
+
   const handleSelectEvent = (event) => {
     const selectedDate = moment(event.start).format("YYYY-MM-DD");
     const selectedData = dsrdata.filter((item) => item.dividedamtDates);

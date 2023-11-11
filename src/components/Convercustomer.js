@@ -49,7 +49,6 @@ function Convertcustomer() {
     }
   };
 
-
   const addcustomer = async (e) => {
     e.preventDefault();
 
@@ -59,9 +58,7 @@ function Convertcustomer() {
       !cnap ||
       !lnf ||
       !customertype ||
-      !approach ||
-      !serviceexecutive ||
-      !pincode
+      !approach
     ) {
       alert("fill all necessary fileds");
     } else {
@@ -73,9 +70,9 @@ function Convertcustomer() {
           // data: formdata,
           headers: { "content-type": "application/json" },
           data: {
-            EnquiryId:id,
+            EnquiryId: id,
             cardNo: customerdata ? customerdata + 1 : 1,
-            category:category ?category:data[0]?.category,
+            category: category ? category : data[0]?.category,
             customerName: customername ? customername : data[0]?.name,
             contactPerson: contactperson
               ? contactperson
@@ -105,7 +102,11 @@ function Convertcustomer() {
         });
       } catch (error) {
         console.error(error);
-        alert(" Not Added");
+        if (error.response) {
+          alert(error.response.data.error); // Display error message from the API response
+        } else {
+          alert("An error occurred. Please try again later.");
+        }
       }
     }
   };
@@ -207,7 +208,7 @@ function Convertcustomer() {
 
                 <div className="row pt-2">
                   <div className="vhs-sub-heading">
-                   <h5>Customer Contact & GST Information</h5> 
+                    <h5>Customer Contact & GST Information</h5>
                   </div>
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">
@@ -234,7 +235,7 @@ function Convertcustomer() {
                   </div>
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">
-                      Email<span className="text-danger"> *</span>{" "}
+                      Email
                     </div>
                     <div className="group pt-1">
                       <input
@@ -246,22 +247,6 @@ function Convertcustomer() {
                     </div>
                   </div>
 
-                  <div className="col-md-4 pt-3">
-                    <div className="vhs-input-label">
-                      Category<span className="text-danger"> *</span>
-                    </div>
-                    <div className="group pt-1">
-                      <select
-                        className="col-md-12 vhs-input-value"
-                        onChange={(e) => setcategory(e.target.value)}
-                      >
-                        <option>{data[0]?.category}</option>
-                        {categorydata.map((item) => (
-                          <option value={item.category}>{item.category}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">GSTIN Id</div>
                     <div className="group pt-1">
@@ -275,7 +260,9 @@ function Convertcustomer() {
                 </div>
 
                 <div className="row pt-2 mt-3">
-                  <div className="vhs-sub-heading"><h5>Customer Detail Address</h5></div>
+                  <div className="vhs-sub-heading">
+                    <h5>Customer Detail Address</h5>
+                  </div>
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">
                       Room / Bunglow / House / Flat No.
@@ -348,7 +335,7 @@ function Convertcustomer() {
 
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">
-                      Pincode <span className="text-danger"> *</span>
+                      Pincode 
                     </div>
                     <div className="group pt-1">
                       <input
@@ -383,54 +370,11 @@ function Convertcustomer() {
                       </select>
                     </div>
                   </div>
-                  <div className="col-md-4 pt-3">
-                    <div className="vhs-input-label">
-                      Size / Area In Sq Ft /
-                      <span className="text-danger"> *</span>
-                    </div>
-                    <div className="group pt-1">
-                      <input
-                        type="text"
-                        className="col-md-12 vhs-input-value"
-                        onChange={(e) => setsize(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-4 pt-3">
-                    <div className="vhs-input-label">Color</div>
-                    <div className="group pt-1">
-                      <select
-                        className="col-md-12 vhs-input-value"
-                        onChange={(e) => setcolor(e.target.value)}
-                      >
-                        <option>-select-</option>
-                        <option style={{ backgroundColor: "red" }}>RED</option>
-                        <option style={{ backgroundColor: "orange" }}>
-                          ORANGE
-                        </option>
-                        <option style={{ backgroundColor: "green" }}>
-                          GREEN Company
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="col-md-4 pt-3">
-                    <div className="vhs-input-label">Instructions</div>
-                    <div className="group pt-1">
-                      <textarea
-                        rows={4}
-                        cols={6}
-                        className="col-md-12 vhs-input-value"
-                        onChange={(e) => setinstructions(e.target.value)}
-                      />
-                    </div>
-                  </div>
 
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">
                       Approach
-                      <span className="text-danger">*</span>
+                     
                     </div>
                     <div className="group pt-1">
                       <select
@@ -441,27 +385,6 @@ function Convertcustomer() {
                         {referecetypedata.map((item) => (
                           <option value={item.referencetype}>
                             {item.referencetype}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="col-md-4 pt-3">
-                    <div className="vhs-input-label">
-                      {" "}
-                      Service Executive
-                      <span className="text-danger">*</span>
-                    </div>
-                    <div className="group pt-1">
-                      <select
-                        className="col-md-12 vhs-input-value"
-                        onChange={(e) => setserviceexc(e.target.value)}
-                      >
-                        <option>-select-</option>
-                        {userdata.map((item) => (
-                          <option value={item.displayname}>
-                            {item.displayname}
                           </option>
                         ))}
                       </select>
