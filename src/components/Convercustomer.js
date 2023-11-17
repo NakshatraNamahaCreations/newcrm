@@ -57,8 +57,8 @@ function Convertcustomer() {
       !rbhf ||
       !cnap ||
       !lnf ||
-      !customertype ||
-      !approach
+      !customertype 
+  
     ) {
       alert("fill all necessary fileds");
     } else {

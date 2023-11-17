@@ -11,16 +11,15 @@ import Modal from "react-bootstrap/Modal";
 
 function Quotedetails() {
   const [show, setShow] = useState(false);
-const data=useLocation();
-const EnquiryId=new URLSearchParams(data.search).get("id")
-
-console.log(EnquiryId);
+  const data = useLocation();
+  const EnquiryId = new URLSearchParams(data.search).get("id");
+  const [jobId, setJobId] = useState("");
+  const [jobName, setJobName] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const admin = JSON.parse(sessionStorage.getItem("admin"));
-  // const { EnquiryId } = useParams();
-  console.log(EnquiryId);
+
   const navigate = useNavigate();
   const [materialdata, setmaterialdata] = useState([]);
   const [regiondata, setregiondata] = useState([]);
@@ -29,11 +28,13 @@ console.log(EnquiryId);
   const [ajobdatarate, setajobdatarate] = useState([]);
   const [note, setnote] = useState("");
 
+  
+
   const [region, setregion] = useState("");
   const [material, setmaterial] = useState("");
   const [qty, setqty] = useState("");
   const [job, setjob] = useState("");
-  const [rate, setrate] = useState(ajobdatarate[0]?.rate);
+  const [rate, setrate] = useState(ajobdatarate?.rate);
   const [quoteflowdata, setquoteflowdata] = useState([]);
   const [quotenxtfoll, setquotenxtfoll] = useState("00-00-0000");
   const [staffname, setstaffname] = useState("");
@@ -54,8 +55,8 @@ console.log(EnquiryId);
   const [projecttype, setprojecttype] = useState(
     quotepagedata[0]?.quotedata[0]?.projectType
   );
-  const [Bookedby, setBookedby] = useState(quotedata[0]?.Bookedby);
-  const [netTotal, setnetTotal] = useState(quotedata[0]?.netTotal);
+
+
   const [paymentDetails, setPaymentDetails] = useState([]);
   const [paymentDate, setPaymentDate] = useState(moment().format("MM-DD-YYYY"));
   const [paymentType, setPaymentType] = useState("");
@@ -73,10 +74,7 @@ console.log(EnquiryId);
   };
   // useEffect to update netTotal when quotedata changes
 
-  const nearte = parseInt(ajobdatarate.map((i) => i.rate));
-
   useEffect(() => {
-    console.log("quotedata:", quotedata); // Add this line to check the value of quotedata
     if (quotedata.length > 0) {
       const initialNetTotal = quotedata[0]?.netTotal;
       setnetTotal(
@@ -85,8 +83,6 @@ console.log(EnquiryId);
     }
   }, [quotedata]);
 
-
-  
   useEffect(() => {
     getresponse();
     getcategory();
@@ -150,9 +146,10 @@ console.log(EnquiryId);
     }
   };
 
+
   const addtreatment = async (e) => {
     e.preventDefault();
-    if (!region | !material | !qty | !job) {
+    if (!region | !material | !qty | !jobName ) {
       alert("Fill all fields");
     } else {
       try {
@@ -168,16 +165,15 @@ console.log(EnquiryId);
             category: category,
             region: region,
             material: material,
-            job: job,
+            job: jobName,
             qty: qty,
-            rate: rate,
-            subtotal: qty * rate,
+            rate: rate ?rate :ajobdatarate?.rate,
+            subtotal: qty * rate ?rate :ajobdatarate?.rate,
             note: note,
           },
         };
         await axios(config).then(function (response) {
           if (response.status === 200) {
-           
             window.location.reload();
           }
         });
@@ -258,18 +254,23 @@ console.log(EnquiryId);
   };
 
   useEffect(() => {
-    postallajobrate();
-  }, [job]);
+    postAllAJobRate();
+  }, [jobId]);
 
-
-
-  const postallajobrate = async () => {
-    let res = await axios.post(apiURL+`/master/postajobrate/${job}`);
-    if ((res.status = 200)) {
-      setajobdatarate(res.data?.ajob);
-      const a = res.data?.ajob;
-  
-      setrate(a[0]?.rate);
+  const postAllAJobRate = async () => {
+    try {
+      const res = await axios.post(apiURL + `/master/postajobrate/${jobId}`);
+      if (res.status === 200) {
+        const aJobData = res.data?.ajob;
+        setajobdatarate(aJobData);
+        if (aJobData && aJobData.length > 0) {
+          setrate(aJobData[0]?.rate);
+        }
+      }
+    } catch (error) {
+      // Handle errors here, for example:
+      console.error("Error fetching job rate:", error);
+      // Set default values or handle the error accordingly
     }
   };
 
@@ -335,9 +336,7 @@ console.log(EnquiryId);
         };
         await axios(config).then(function (response) {
           if (response.status === 200) {
-            console.log("success");
-            alert(" Added");
-            window.location.assign(`/quotedetails/${EnquiryId}`);
+            window.location.reload();
           }
         });
       } catch (error) {
@@ -377,9 +376,9 @@ console.log(EnquiryId);
         };
         await axios(config).then(function (response) {
           if (response.status === 200) {
-            console.log("success");
-            alert(" Added");
-            window.location.assign(`/quotedetails/${EnquiryId}`);
+     
+      
+            window.location.reload();
           }
         });
       } catch (error) {
@@ -410,12 +409,10 @@ console.log(EnquiryId);
     navigate(`/convertcustomer/${EnquiryId}`);
   };
 
-
   // Assuming quotepagedata is an array of objects with quotefollowup property
   const confirmedResponses = quotepagedata[0]?.quotefollowup.filter(
     (item) => item.response === "Confirmed"
   );
-
 
   const addPayment = async () => {
     try {
@@ -425,7 +422,7 @@ console.log(EnquiryId);
         baseURL: apiURL,
         headers: { "content-type": "application/json" },
         data: {
-          paymentDate: paymentDate,
+          paymentDate: moment().format("DD-MM-YYY"),
 
           paymentMode: paymentMode,
           amount: paymentAmount,
@@ -448,7 +445,7 @@ console.log(EnquiryId);
 
   useEffect(() => {
     getAdvPayment();
-  }, [enquirydata]);
+  }, [confirmedResponses]);
 
   const getAdvPayment = async () => {
     try {
@@ -478,8 +475,11 @@ console.log(EnquiryId);
       return "transparent";
     }
   }
-
- 
+  const [netTotal, setnetTotal] = useState(
+    quotedata[0]?.netTotal !== null && quotedata[0]?.netTotal !== undefined
+      ? quotedata[0]?.netTotal
+      : Gst ? total + total * 0.05 - adjustments : total - adjustments
+  );
 
   return (
     <div className="web">
@@ -671,12 +671,25 @@ console.log(EnquiryId);
                     <div className="vhs-input-label">Select Job</div>
                     <select
                       className="col-md-12 vhs-input-value"
-                      onChange={(e) => setjob(e.target.value)}
+                      onChange={(e) => {
+                        const selectedJob = ajobdata.find(
+                          (item) => item._id === e.target.value
+                        );
+                        if (selectedJob) {
+                          setJobId(selectedJob._id);
+                          setJobName(selectedJob.desc);
+                        } else {
+                          setJobId("");
+                          setJobName("");
+                        }
+                      }}
                       name="job"
                     >
                       <option>--select--</option>
                       {ajobdata.map((item) => (
-                        <option value={item._id}>{item.desc}</option>
+                        <option key={item._id} value={item._id}>
+                          {item.desc}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -696,15 +709,13 @@ console.log(EnquiryId);
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">Enter Rate </div>
                     <div className="group pt-1">
-                      {ajobdatarate.map((item) => (
-                        <input
-                          type="text"
-                          name="rate"
-                          className="col-md-12 vhs-input-value"
-                          onChange={(e) => setrate(e.target.value)}
-                          defaultValue={item.rate}
-                        />
-                      ))}
+                      <input
+                        type="text"
+                        name="rate"
+                        className="col-md-12 vhs-input-value"
+                        onChange={(e) => setrate(e.target.value)}
+                        defaultValue={ajobdatarate?.rate}
+                      />
                     </div>
                   </div>{" "}
                   <div className="col-md-4 pt-3">
@@ -837,9 +848,19 @@ console.log(EnquiryId);
                       class="form-check-input"
                       type="checkbox"
                       checked={Gst}
-                      // checked={(quotedata[0]?.GST)?(quotedata[0]?.GST):false}
-                      onChange={(e) => setGST(e.target.checked)}
-                      // onChange={handleChange}
+                    
+                      onChange={(e) => {
+                        const newGstValue = e.target.checked;
+                        setGST(newGstValue);
+                      
+                        const newNetTotal = newGstValue
+                          ? total + total * 0.05 - adjustments
+                          : total - adjustments;
+                      
+                        setnetTotal(newNetTotal);
+                      }}
+                      
+                     
                     />
                     <label class="vhs-sub-heading mx-3" for="flexCheckDefault">
                       YES / NO
@@ -856,7 +877,7 @@ console.log(EnquiryId);
                       className="col-md-12 vhs-input-value"
                       value={total}
 
-                      // onChange={(e)=>settotal(e.target.value)}
+                   
                     />
                   </div>
                 </div>{" "}
@@ -866,7 +887,17 @@ console.log(EnquiryId);
                     <input
                       type="text"
                       className="col-md-12 vhs-input-value"
-                      onChange={(e) => setadjustment(e.target.value)}
+                      onChange={(e) => {
+                        const newAdjustment = parseFloat(e.target.value);
+                        setadjustment(newAdjustment);
+                      
+                        const newNetTotal = Gst
+                          ? total + total * 0.05 - newAdjustment
+                          : total - newAdjustment;
+                      
+                        setnetTotal(newNetTotal);
+                      }}
+                      
                       defaultValue={quotedata[0]?.adjustments}
                     />
                   </div>
@@ -877,24 +908,10 @@ console.log(EnquiryId);
                     <input
                       type="text"
                       className="col-md-12 vhs-input-value"
-                      // value={netTotal}
-                      defaultValue={netTotal}
-                      // placeholder={netTotal}
+                      value={netTotal}
+                      
                       onChange={(e) => setnetTotal(e.target.value)}
                     />
-
-                    {/* <input
-                      type="text"
-                      className="col-md-12 vhs-input-value"
-                      // value={
-                      //   adjustedNetTotal
-                      //     ? adjustedNetTotal
-                      //     : quotedata[0]?.netTotal
-                      // }
-                      onChange={(e) => setnetTotal(e.target.value)}
-                      value={adjustedNetTotal?adjustedNetTotal:totalWithGST}
-                      // defaultValue={ netTotal? quotedata[0]?.netTotal?quotedata[0]?.netTotal: net}
-                    /> */}
                   </div>
                 </div>{" "}
               </div>
@@ -1091,7 +1108,7 @@ console.log(EnquiryId);
               <div className="row pt-3 justify-content-center">
                 <div className="col-md-3 ">
                   <button className="vhs-button " onClick={addquotefollowup}>
-                    Save Quote
+                    Save 
                   </button>
                 </div>
               </div>

@@ -43,7 +43,7 @@ function Customersearchdetails() {
   const [houseNumber, setHouseNumber] = useState("");
   const [streetName, setStreetName] = useState("");
   const [city, setCity] = useState("");
-  const [state, setState] = useState("");
+  const [Address,setAddress] = useState("");
   const [pincode, setPincode] = useState("");
   const [landmark, setLankmark] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
@@ -142,6 +142,7 @@ function Customersearchdetails() {
   }, [serviceId]);
 
  
+
   useEffect(() => {
     const gettreatment = async () => {
       try {
@@ -294,7 +295,7 @@ function Customersearchdetails() {
           // data: formdata,
           headers: { "content-type": "application/json" },
           data: {
-            customerData: customerdata,
+            customerData: customerdata[0],
             dividedDates: dividedDates,
             dividedamtDates: dividedamtDates,
             dividedamtCharges: dividedamtCharges,
@@ -326,7 +327,7 @@ function Customersearchdetails() {
         if (whatsappdata.length > 0) {
           // Assuming you want the first item from whatsappdata for the API call
           const selectedResponse = whatsappdata[0];
-          // makeApiCall(selectedResponse, customerdata[0]?.mainContact);
+          makeApiCall(selectedResponse, customerdata[0]?.mainContact);
 
           await axios(config).then(function (response) {
             if (response.status === 200) {
@@ -416,6 +417,41 @@ function Customersearchdetails() {
     }
   };
 
+
+  const addcustomeraddresss = async (e) => {
+    e.preventDefault();
+
+    try {
+      const config = {
+        url: "/addcustomeraddress",
+        method: "post",
+        baseURL: "https://api.vijayhomeservicebengaluru.in/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          userId: customerdata[0]?._id,
+          address: Address,
+          saveAs: streetName,
+          landmark: landmark,
+          // otherData: otherData,
+          platNo: houseNumber,
+        },
+      };
+      await axios(config).then(function (response) {
+        if (response.status === 200) {
+     
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      alert(
+        "Address not added, Please delete one address to update another address "
+      );
+    }
+  };
+
+  const [customeraddress, setcustomerAddressdata] = useState([]);
+ 
+
   const [selectedRow, setSelectedRow] = useState(null);
   const [highlightRow, setHighlightRow] = useState(false);
 
@@ -433,6 +469,8 @@ function Customersearchdetails() {
   const addingDeliveryAddress = selectedRow?.flatMap((address) =>
     address.flatMap((item) => item)
   );
+
+
 
   const columns = [
     {
@@ -492,8 +530,7 @@ function Customersearchdetails() {
 
     const contentTemplate = selectedResponse?.template || "";
 
-    console.log("Selected response in the makeapi:", whatsappTemplate);
-    console.log("Content template:", contentTemplate);
+    
 
     if (!contentTemplate) {
       console.error("Content template is empty. Cannot proceed.");
@@ -1548,18 +1585,18 @@ function Customersearchdetails() {
                 </select>
               </div>
             </div>
-            <div className="col-md-4 pt-3">
-              <div className="vhs-input-label">State</div>
+            <div className="col-md-8 pt-3">
+              <div className="vhs-input-label">Address</div>
               <div className="group pt-1">
                 <input
                   type="text"
                   className="col-md-12 vhs-input-value"
-                  onChange={(e) => setState(e.target.value)}
+                  onChange={(e) => setAddress(e.target.value)}
                   // value={mainarea}
                 />
               </div>
             </div>
-            <div className="col-md-4 pt-3">
+            {/* <div className="col-md-4 pt-3">
               <div className="vhs-input-label">Pincode</div>
               <div className="group pt-1">
                 <input
@@ -1569,12 +1606,12 @@ function Customersearchdetails() {
                   // value={pincode}
                 />
               </div>
-            </div>
+            </div> */}
          
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={addDeliveryAddress}>Add</Button>
+          <Button onClick={addcustomeraddresss}>Add</Button>
         </Modal.Footer>
       </Modal>
     </div>

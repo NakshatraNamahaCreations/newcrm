@@ -12,7 +12,7 @@ function Createquote() {
   const location = useLocation();
   const { data } = location.state;
 
-  console.log("data-----", data);
+
   const [techniciandata, settechniciandata] = useState([]);
   const [vendordata, setvendordata] = useState([]);
   const apiURL = process.env.REACT_APP_API_URL;
@@ -167,14 +167,13 @@ function Createquote() {
 
     const contentTemplate = selectedResponse?.template || "";
 
-    console.log("Selected response in the makeapi:", whatsappTemplate);
-    console.log("Content template:", contentTemplate);
+
 
     if (!contentTemplate) {
       console.error("Content template is empty. Cannot proceed.");
       return;
     }
-    console.log("91" + data.enquirydata[0].contact1);
+
     const content = contentTemplate.replace(
       /\{Customer_name\}/g,
       data.enquirydata[0].name

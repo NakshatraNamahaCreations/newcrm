@@ -73,13 +73,13 @@ function Home() {
     let res = await axios.get(apiURL + "/getcustomer");
     if (res.status === 200) {
       setCustomer(res.data?.customers);
-      console.log("customer===>", res.data.customers);
+    
     }
   };
   const getEnquiry = async () => {
     let res = await axios.get(apiURL + "/getenquiry");
     if (res.status === 200) {
-      console.log("enquiry", res.data?.enquiryadd);
+    
       setEnquiry(res.data?.enquiryadd);
     }
   };
@@ -87,7 +87,7 @@ function Home() {
   const getService = async () => {
     let res = await axios.get(apiURL + "/getservicedetails");
     if (res.status === 200) {
-      console.log("service", res.data?.servicedetails);
+
       setService(res.data?.servicedetails);
     }
   };
@@ -95,7 +95,7 @@ function Home() {
   const getEnquiryFollowup = async () => {
     let res = await axios.get(apiURL + "/getcalllateraggredata");
     if (res.status === 200) {
-      console.log("enquiryFollowup", res.data?.enquiryfollowup);
+
       setEnquiryFollowup(res.data?.enquiryfollowup);
     }
   };
@@ -127,6 +127,10 @@ function Home() {
   //   "enquiryFollowUpCurrentDateLength",
   //   enquiryFollowUpCurrentDateLength.length
   // );
+
+
+
+  
   return (
     <div className="web">
       <Header />

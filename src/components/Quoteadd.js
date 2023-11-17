@@ -48,7 +48,7 @@ function Quotelist() {
   };
   let i = 0;
 
-  console.log("quotelist", enquiryflwdata);
+
 
   useEffect(() => {
     const filterResults = () => {
@@ -186,7 +186,14 @@ function Quotelist() {
   ]);
 
   const click = (data) => {
-    navigate(`/quotedetails/${data}`);
+    if (data) {
+      window.location.assign(`/quotedetails/?id=${data}`, {
+        state: { data: data },
+      });
+    } else {
+      // Handle the case when data is null or undefined
+      // For example, show an error message or perform a different action
+    }
   };
 
   // Pagination logic

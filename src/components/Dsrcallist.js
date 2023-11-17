@@ -240,8 +240,28 @@ function Dsrcallist() {
       return acc;
     }, null);
 
+    console.log("foundCharge", foundCharge);
+
     return foundCharge !== null ? foundCharge : 0;
   });
+
+  const returndata = (data) => {
+    const dateToMatch = new Date(date);
+    const matchingData = [];
+
+    let charge = 0;
+    data.dividedamtDates.forEach((dateObj, index) => {
+      const dividedDate = new Date(dateObj.date);
+      if (dividedDate.getDate() === dateToMatch.getDate()) {
+        matchingData.push({
+          date: dateObj.date,
+          charge: data.dividedamtCharges[index].charge,
+        });
+      }
+    });
+
+    return matchingData[0]?.charge;
+  };
 
   return (
     <div className="web">
@@ -515,7 +535,12 @@ function Dsrcallist() {
                     {selectedData.type === "userapp" ? (
                       <td>{selectedData?.GrandTotal}</td>
                     ) : (
-                      <td>{charge} </td>
+                      <td>
+                       {returndata(selectedData)?returndata(selectedData):"0" }
+                      
+                    
+
+                      </td>
                     )}
                     <td>{selectedData.paymentMode}</td>
                     <td>{selectedData.desc}</td>

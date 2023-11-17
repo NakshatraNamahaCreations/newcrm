@@ -11,7 +11,7 @@ function Userrights() {
   const admin = JSON.parse(sessionStorage.getItem("admin"));
   const location = useLocation();
   const { data } = location.state || {};
-  console.log("data", data);
+
   const [citydata, setcitydata] = useState([]);
   const [filterdata, setfilterdata] = useState([]);
   const [categorydata, setcategorydata] = useState([]);
@@ -37,6 +37,7 @@ function Userrights() {
   );
   const [b2b, setB2B] = useState(data?.b2b || false);
   const [community, setCommunity] = useState(data?.community || false);
+  const [paymentReport, setpaymentReport] = useState(data?.paymentReport || false);
   const [reports, setReports] = useState(data?.reports || false);
   const apiURL = process.env.REACT_APP_API_URL;
   const handleClick = (divNum) => () => {
@@ -73,6 +74,7 @@ function Userrights() {
           reports: reports,
           category: selectedCatagory,
           city: selectedCity,
+          paymentReport:paymentReport
         },
       };
       await axios(config).then(function (response) {
@@ -357,6 +359,17 @@ function Userrights() {
                     />
                   </td>
                   <td style={{ width: "80%" }}>Community</td>
+                </tr>
+                  <tr>
+                  <td style={{ width: "10%" }}>
+                    <input
+                      type="checkbox"
+                      className="table-checkbox"
+                      checked={paymentReport}
+                      onChange={(e) => setpaymentReport(!paymentReport)}
+                    />
+                  </td>
+                  <td style={{ width: "80%" }}>Payment Report</td>
                 </tr>
                 <tr>
                   <td style={{ width: "10%" }}>

@@ -236,7 +236,7 @@ function Dsrdetails() {
     } else {
       try {
         const config = {
-          url: "/adddsrcall",
+          url: `/updatedsrdata/${dsrdata[0]?._id}`,
           method: "post",
           baseURL: apiURL,
           // data: formdata,
