@@ -88,7 +88,8 @@ function Customeradd() {
         const response = await axios(config);
 
         if (response.status === 200) {
-          navigate(`/customersearchdetails/${latestCardNo + 1}`);
+           const id=response.data.user
+          navigate(`/customersearchdetails/${id?._id}`);
         }
       } catch (error) {
         console.error(error);

@@ -119,7 +119,7 @@ function Payment() {
       if (res.status === 200) {
         
         setPaymentDetails(
-          res.data?.payments.filter((i) => i.serviceId === data._id && i.serviceDate ===data1 )
+          res.data?.payments.filter((i) => i.serviceId === data._id  )
         );
       }
     } catch (error) {

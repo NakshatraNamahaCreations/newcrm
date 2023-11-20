@@ -10,7 +10,7 @@ function Convertcustomer() {
   const [data, setdata] = useState([]);
   const [citydata, setcitydata] = useState([]);
   const [customertypedata, setcustomertypedata] = useState([]);
-  const [cardno, setcardno] = useState("1234");
+
   const [customername, setcustomername] = useState(data[0]?.name);
   const [contactperson, setcontactperson] = useState("");
   const [maincontact, setmaincontact] = useState(data[0]?.contact1);
@@ -57,7 +57,7 @@ function Convertcustomer() {
       !rbhf ||
       !cnap ||
       !lnf ||
-      !customertype 
+      !customertype
   
     ) {
       alert("fill all necessary fileds");
@@ -97,11 +97,13 @@ function Convertcustomer() {
         };
         await axios(config).then(function (response) {
           if (response.status === 200) {
-            navigate(`/customersearchdetails/${customerdata + 1}`);
+            const data=response.data.user
+
+            navigate(`/customersearchdetails/${data?._id}`);
           }
         });
       } catch (error) {
-        console.error(error);
+
         if (error.response) {
           alert(error.response.data.error); // Display error message from the API response
         } else {

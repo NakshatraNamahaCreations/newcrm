@@ -37,13 +37,13 @@ function Customersearchdetails() {
   const [serviceDetails, setServiceDetails] = useState([]);
   const [whatsappTemplate, setWhatsappTemplate] = useState("");
   const [whatsappdata, setwhatsappdata] = useState([]);
-
+  const [customerAddressdata, setcustomerAddressdata] = useState([]);
   const [newCharge, setnewCharge] = useState("");
   // delivery address
   const [houseNumber, setHouseNumber] = useState("");
   const [streetName, setStreetName] = useState("");
   const [city, setCity] = useState("");
-  const [Address,setAddress] = useState("");
+  const [Address, setAddress] = useState("");
   const [pincode, setPincode] = useState("");
   const [landmark, setLankmark] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
@@ -52,7 +52,19 @@ function Customersearchdetails() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [viewAddress, setViewAddress] = useState(false);
+  const [show1, setShow1] = useState(false);
+  const handleClose1 = () => setShow1(false);
+  const handleShow1 = () => setShow1(true);
+
+  const [selectedAddress, setSelectedAddress] = useState("");
+
+  const handleAddressSelect = (address) => {
+    setSelectedAddress(address);
+  };
+
+  const handleRowClick = (address) => {
+    setSelectedAddress(address);
+  };
 
   useEffect(() => {
     const getcustomer = async () => {
@@ -60,7 +72,7 @@ function Customersearchdetails() {
         let res = await axios.get(apiURL + "/getcustomer");
         if (res.status === 200) {
           const filteredCustomers = res.data?.customers?.filter(
-            (item) => item._id === id 
+            (item) => item._id === id
           );
           setcustomerdata(filteredCustomers);
         }
@@ -141,15 +153,13 @@ function Customersearchdetails() {
     }
   }, [serviceId]);
 
- 
-
   useEffect(() => {
     const gettreatment = async () => {
       try {
         let res = await axios.get(apiURL + "/getservicedetails");
         if (res.status === 200) {
           const filteredData = res.data?.servicedetails?.filter(
-            (i) => i.customerData[0]._id === id
+            (i) => i.userId === id
           );
           filteredData.forEach((item) => {
             const oneCommunity = parseInt(item.oneCommunity);
@@ -159,14 +169,12 @@ function Customersearchdetails() {
               const totalCharge = serviceCharge - oneCommunity;
               item.dividedCharges = totalCharge;
               setnewCharge(item.dividedCharges);
-
-    
             } else {
             }
           });
 
-          // Update the state with the filtered data containing the calculated totalCharge
           settreatmentdata(filteredData);
+          console.log("filteredData", filteredData);
         }
       } catch (error) {
         console.log("error", error);
@@ -187,7 +195,7 @@ function Customersearchdetails() {
 
       if (res.status === 200) {
         const responsedData = res.data.addcall;
-     
+
         const dsrFilteredData = responsedData.filter(
           (item) => item.cardNo == id
         );
@@ -198,8 +206,6 @@ function Customersearchdetails() {
       console.error("Error fetching data:", error);
     }
   };
-
-
 
   //community details
   const getCommunityDetails = async () => {
@@ -233,9 +239,9 @@ function Customersearchdetails() {
   const remainingAmt = oneCommunity.percentage
     ? serviceCharge - communityPercentage
     : serviceCharge;
-    const ct=contractType==="AMC" ?firstDateamt :dateofService;
-    const ext=contractType==="AMC" ?expiryDateamt :dateofService;
-    const af=contractType==="AMC" ?amtFrequency:1;
+  const ct = contractType === "AMC" ? firstDateamt : dateofService;
+  const ext = contractType === "AMC" ? expiryDateamt : dateofService;
+  const af = contractType === "AMC" ? amtFrequency : 1;
 
   const sAmtDate = moment(ct, "YYYY-MM-DD");
   const eamtDate = moment(expiryDateamt, "YYYY-MM-DD");
@@ -246,8 +252,6 @@ function Customersearchdetails() {
 
   const dividedamtDates = [];
   const dividedamtCharges = [];
-
-
 
   for (let i = 0; i < af; i++) {
     const date = sDate.clone().add(intervalamt * i, "days");
@@ -279,12 +283,31 @@ function Customersearchdetails() {
     }
   };
 
+  const selecttheaddress = (event) => {
+    event.preventDefault();
+    if (selectedAddress) {
+      addtreatmentdetails();
+    } else {
+      // handleShow(true)
+      // alert("asda")
 
+      setShow1(true);
+    }
+  };
+
+  // const savetheservicedata = (event) => {
+  //   event.preventDefault();
+  //   if (selectedAddress) {
+  //     addtreatmentdetails();
+  //   } else {
+  //     handleShow();
+  //   }
+  // };
 
   const addtreatmentdetails = async (e) => {
     e.preventDefault();
-    if (!contractType || !treatment) {
 
+    if (!contractType || !treatment || !selectedAddress) {
       alert("Fill all feilds");
     } else {
       try {
@@ -299,17 +322,18 @@ function Customersearchdetails() {
             dividedDates: dividedDates,
             dividedamtDates: dividedamtDates,
             dividedamtCharges: dividedamtCharges,
-   
             dCategory: customerdata[0].category,
+            userId: customerdata[0]._id,
             category: category,
             contractType: contractType,
             service: treatment,
+            GrandTotal:serviceCharge,
             serviceID: serviceId,
             slots: selectedSlot,
-            selectedSlotText:selectedSlot,
+            selectedSlotText: selectedSlot,
             serviceCharge: serviceCharge,
             dateofService: dateofService,
-            deliveryAddress: addingDeliveryAddress,
+            deliveryAddress: selectedAddress,
             desc: desc,
             city: customerdata[0].city,
             serviceFrequency: serviceFrequency,
@@ -340,7 +364,6 @@ function Customersearchdetails() {
           console.error("whatsappdata is empty. Cannot proceed.");
           alert("Not Added");
         }
-       
       } catch (error) {
         console.error(error);
         alert(" Not Added");
@@ -385,143 +408,81 @@ function Customersearchdetails() {
     }
   };
 
-  const addDeliveryAddress = async (e) => {
-    e.preventDefault();
-    try {
-      const cardNo = id;
-      const config = {
-        url: `/addDeliveryAddress/${cardNo}`,
-        method: "post",
-        baseURL: apiURL,
-        headers: { "content-type": "application/json" },
-        data: {
-          deliveryAddress: {
-            houseNumber: houseNumber,
-            streetName: streetName,
-            city: city,
-            state: state,
-            pincode: pincode,
-            landMark: landmark,
-          },
-        },
-      };
-      await axios(config).then(function (response) {
-        if (response.status === 200) {
-          alert(response.data.success);
-          window.location.reload("");
-        }
-      });
-    } catch (error) {
-      console.error("error", error);
-      alert(error.response.data.error);
-    }
-  };
-
-
   const addcustomeraddresss = async (e) => {
-    e.preventDefault();
 
-    try {
-      const config = {
-        url: "/addcustomeraddress",
-        method: "post",
-        baseURL: "https://api.vijayhomeservicebengaluru.in/api",
-        headers: { "content-type": "application/json" },
-        data: {
-          userId: customerdata[0]?._id,
-          address: Address,
-          saveAs: streetName,
-          landmark: landmark,
-          // otherData: otherData,
-          platNo: houseNumber,
-        },
-      };
-      await axios(config).then(function (response) {
-        if (response.status === 200) {
-     
-        }
-      });
-    } catch (error) {
-      console.error(error);
-      alert(
-        "Address not added, Please delete one address to update another address "
-      );
+    if (!Address || !customerdata[0]?._id || !landmark || !streetName) {
+      alert("Please fill neccesary fields");
+    } else {
+      try {
+        const config = {
+          url: "/addcustomeraddress",
+          method: "post",
+          baseURL: "https://api.vijayhomeservicebengaluru.in/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            userId: customerdata[0]?._id,
+            address: Address,
+            saveAs: streetName,
+            landmark: landmark,
+            // otherData: otherData,
+            platNo: houseNumber,
+          },
+        };
+        await axios(config).then(function (response) {
+          if (response.status === 200) {
+            window.location.reload();
+          }
+        });
+      } catch (error) {
+        console.error(error);
+        alert(
+          "Address not added, Please delete one address to update another address "
+        );
+      }
     }
   };
 
-  const [customeraddress, setcustomerAddressdata] = useState([]);
- 
+  useEffect(() => {
+    if (customerdata && customerdata[0]?._id) {
+      getaddress(customerdata[0]._id);
+    }
+  }, [customerdata]); // Update the dependency array based on your requirements
 
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [highlightRow, setHighlightRow] = useState(false);
+  const getaddress = async (customerId) => {
+    try {
+      if (!customerId) return; // Ensure customerId is valid
 
+      const res = await axios.get(
+        `https://api.vijayhomeservicebengaluru.in/api/getcustomeraddresswithuserid/${customerId}`
+      );
 
-
-  const handleRowClick = (row) => {
-    const deliveryAddresses = customerdata?.map((ele) => ele.deliveryAddress);
-    let deliveryAddressesfilter = deliveryAddresses?.map((ele) =>
-      ele.filter((item) => item._id === row)
-    );
-    setSelectedRow(deliveryAddressesfilter);
-    setHighlightRow(true);
+      if (res.status === 200) {
+        setcustomerAddressdata(res.data?.customerAddress);
+      }
+    } catch (error) {
+      console.error("Error fetching address:", error);
+      // Handle error scenarios (e.g., setting an error state)
+    }
   };
 
-  const addingDeliveryAddress = selectedRow?.flatMap((address) =>
-    address.flatMap((item) => item)
-  );
-
-
-
-  const columns = [
-    {
-      name: "Sl No",
-      selector: (row, i) => <div>{i + 1}</div>,
-    },
-    {
-      name: "Room/House/Flat No",
-      selector: "houseNumber",
-    },
-    {
-      name: "Colony/Apartment/Plot Name",
-      selector: "streetName",
-    },
-    {
-      name: "City",
-      selector: "city",
-    },
-    {
-      name: "State",
-      selector: "state",
-    },
-    {
-      name: "Pincode",
-      selector: "pincode",
-    },
-    {
-      name: "Landmark/Near By Famous Place",
-      selector: "landMark",
-    },
-  ];
+  const deletecustomeraddress = async (id) => {
+    axios({
+      method: "post",
+      url: apiURL + "/deletecustomeraddress/" + id,
+    })
+      .then(function (response) {
+        //handle success
+        console.log(response);
+        alert("Deleted successfully");
+        window.location.reload();
+      })
+      .catch(function (error) {
+        //handle error
+        console.log(error.response.data);
+      });
+  };
 
   let i = 1;
-
-  const extractArray = customerdata.flatMap((item) =>
-    item.deliveryAddress.map((address) => ({
-      ...item,
-      ...address,
-    }))
-  );
-
-  // console.log("treatment", treatment);
-
-  const customerNames = customerdata[0]?.city;
-  // console.log("Customer names:", customerNames);
-
-  function stripHtml(html) {
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    const plainText = doc.body.textContent || "";
-    return plainText.replace(/\r?\n/g, " ");
-  }
 
   const makeApiCall = async (selectedResponse, contactNumber) => {
     const apiURL =
@@ -529,8 +490,6 @@ function Customersearchdetails() {
     const accessToken = "c7475f11-97cb-4d52-9500-f458c1a377f4";
 
     const contentTemplate = selectedResponse?.template || "";
-
-    
 
     if (!contentTemplate) {
       console.error("Content template is empty. Cannot proceed.");
@@ -552,18 +511,16 @@ function Customersearchdetails() {
       /\{Video_link\}/g,
       selectedVideoLink
     );
-    
-    
 
     // Replace <p> with line breaks and remove HTML tags
     const convertedText = serviceVideoLink
-    .replace(/<p>/g, "\n")
-    .replace(/<\/p>/g, "")
-    .replace(/<br>/g, "\n")
-    .replace(/&nbsp;/g, "")
-    .replace(/<strong>(.*?)<\/strong>/g, "<b>$1</b>")
-    .replace(/<[^>]*>/g, "");
-    
+      .replace(/<p>/g, "\n")
+      .replace(/<\/p>/g, "")
+      .replace(/<br>/g, "\n")
+      .replace(/&nbsp;/g, "")
+      .replace(/<strong>(.*?)<\/strong>/g, "<b>$1</b>")
+      .replace(/<[^>]*>/g, "");
+
     const requestData = [
       {
         dst: "91" + contactNumber,
@@ -684,7 +641,7 @@ function Customersearchdetails() {
                           <b
                             className="ms-2"
                             style={{ cursor: "pointer" }}
-                            onClick={() => setViewAddress(true)}
+                            onClick={handleShow1}
                           >
                             View Delivery Address
                           </b>
@@ -709,42 +666,6 @@ function Customersearchdetails() {
                   </div>
                 ))}
               </form>
-            </div>
-            <div className="card-body p-4">
-              {viewAddress ? (
-                <>
-                  <div
-                    className="d-flex"
-                    style={{ justifyContent: "space-between" }}
-                  >
-                    <h5>Delivery Address</h5>
-                    <i
-                      class="fa-solid fa-xmark"
-                      title="Close"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setViewAddress(false)}
-                    ></i>
-                  </div>
-
-                  <hr />
-
-                  <div>
-                    <DataTable
-                      columns={columns}
-                      data={extractArray}
-                      pagination
-                      fixedHeader
-                      selectableRowsHighlight
-                      subHeaderAlign="left"
-                      highlightOnHover
-                      onRowClicked={(row) => {
-                        handleRowClick(row._id);
-                        // setHighlightRow(!highlightRow);
-                      }}
-                    />
-                  </div>
-                </>
-              ) : null}
             </div>
 
             <div className="card-body p-4">
@@ -802,22 +723,18 @@ function Customersearchdetails() {
                         <select
                           className="col-md-12 vhs-input-value"
                           onChange={(e) => {
-                            console.log(
-                              "serviceDetails before",
-                              serviceDetails
-                            );
-
                             const selectedService = serviceDetails.find(
                               (item) => item._id === e.target.value
                             );
-                           
+
                             if (selectedService) {
                               setServiceId(e.target.value);
                               const serviceName =
                                 selectedService.serviceName || "";
-                              const serviceTitle =
-                                selectedService.servicetitle || "";
-                              const combinedTreatment = `${serviceName}/${serviceTitle}`;
+                              const Subcategory =
+                                selectedService.Subcategory || "";
+                              const combinedTreatment = `${Subcategory}-${serviceName}`;
+
                               settreatment(combinedTreatment);
                               setSelectedVideoLink(
                                 selectedService.videoLink || ""
@@ -836,31 +753,6 @@ function Customersearchdetails() {
                               {item.serviceName}/{item.servicetitle}
                             </option>
                           ))}
-                        </select>
-                      </div>
-                      <div className="col-md-4 mt-2">
-                        <div className="vhs-input-label">
-                          Slot
-                          <span className="text-danger">*</span>
-                        </div>
-                        <select
-                          className="col-md-12 vhs-input-value"
-                          onChange={(e) => setSelectedSlot(e.target.value)}
-                          name="material"
-                        >
-                          <option>--select--</option>
-                          {serviceSlots
-                            ?.filter(
-                              (slot) => slot.slotCity === customerdata[0]?.city // Filter based on city match
-                            )
-                            .map((slot, index) => (
-                              <option
-                                key={index}
-                                value={`${slot.startTime}`}
-                              >
-                                {`${slot.startTime} `}
-                              </option>
-                            ))}
                         </select>
                       </div>
                     </div>
@@ -1041,11 +933,31 @@ function Customersearchdetails() {
                       </>
                     )}
 
+                    <div className="col-md-4 mt-2">
+                      <div className="vhs-input-label">Slots</div>
+                      <select
+                        className="col-md-12 vhs-input-value"
+                        onChange={(e) => setSelectedSlot(e.target.value)}
+                        name="material"
+                      >
+                        <option>--select--</option>
+                        {serviceSlots
+                          ?.filter(
+                            (slot) => slot.slotCity === customerdata[0]?.city // Filter based on city match
+                          )
+                          .map((slot, index) => (
+                            <option key={index} value={`${slot.startTime}`}>
+                              {`${slot.startTime} `}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
                     <div className="col-md-4 pt-3 mt-4 justify-content-center">
                       <div className="col-md-2 ">
                         <button
                           className="vhs-button"
-                          onClick={addtreatmentdetails}
+                          onClick={selecttheaddress}
                         >
                           Add Item
                         </button>
@@ -1536,7 +1448,7 @@ function Customersearchdetails() {
               <h5>Customer Detail Address</h5>
             </div>
             <div className="col-md-4 pt-3">
-              <div className="vhs-input-label">Room/House/Flat No.</div>
+              <div className="vhs-input-label">Flat No.</div>
               <div className="group pt-1">
                 <input
                   type="text"
@@ -1558,9 +1470,7 @@ function Customersearchdetails() {
               </div>
             </div>
             <div className="col-md-4 pt-3">
-              <div className="vhs-input-label">
-                Landmark/Near By Famous Place
-              </div>
+              <div className="vhs-input-label">Landmark</div>
               <div className="group pt-1">
                 <input
                   type="text"
@@ -1570,21 +1480,21 @@ function Customersearchdetails() {
                 />
               </div>
             </div>
-            <div className="col-md-4 pt-3">
+            {/* <div className="col-md-4 pt-3">
               <div className="vhs-input-label">City</div>
               <div className="group pt-1">
                 <select
                   className="col-md-12 vhs-input-value"
                   onChange={(e) => setCity(e.target.value)}
                 >
-                  {/* <option value={data.city}>{data.city}</option> */}
+                
                   <option value="">Select</option>
                   {admin?.city.map((item) => (
                     <option defaultValue={item.name}>{item.name}</option>
                   ))}
                 </select>
               </div>
-            </div>
+            </div> */}
             <div className="col-md-8 pt-3">
               <div className="vhs-input-label">Address</div>
               <div className="group pt-1">
@@ -1596,22 +1506,72 @@ function Customersearchdetails() {
                 />
               </div>
             </div>
-            {/* <div className="col-md-4 pt-3">
-              <div className="vhs-input-label">Pincode</div>
-              <div className="group pt-1">
-                <input
-                  type="text"
-                  className="col-md-12 vhs-input-value"
-                  onChange={(e) => setPincode(e.target.value)}
-                  // value={pincode}
-                />
-              </div>
-            </div> */}
-         
           </div>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={addcustomeraddresss}>Add</Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={show1}
+        onHide={handleClose1}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Select the Deliver Address
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row px-3">
+            {customerAddressdata.length > 0 ? (
+              customerAddressdata.map((address, index) => (
+                <div key={index}>
+                  <div
+                    className="col-md-12 d-flex"
+                    onClick={() => handleRowClick(address)}
+                  >
+                    <div className="mt-2">
+                      <input
+                        type="radio"
+                        checked={selectedAddress === address}
+                        onChange={() => handleAddressSelect(address)}
+                        style={{ width: 40, fontSize: "20px",height:"20px" }}
+                      />
+                    </div>
+                    <div className="d-flex">
+                      {`${address.platNo}, ${address.landmark}, ${address.address}`}
+                    </div>
+                    <a
+                      onClick={() => deletecustomeraddress(address._id)}
+                      className="hyperlink mx-1"
+                    >
+                      <i
+                        class="fa-solid fa-trash"
+                        title="Delete"
+                        style={{ color: "#dc3545" }}
+                      ></i>
+                    </a>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div>
+                <p>No data found ?</p>
+                <Button onClick={handleShow}>Add Address</Button>
+              </div>
+            )}
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          {customerAddressdata.length > 0 ? (
+            <Button onClick={addtreatmentdetails}>Next</Button>
+          ) : (
+            <></>
+          )}
         </Modal.Footer>
       </Modal>
     </div>

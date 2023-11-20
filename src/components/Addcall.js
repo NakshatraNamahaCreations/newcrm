@@ -77,7 +77,7 @@ function Addcall() {
   }
 
   const total = calculateTotalPrice(treatmentdata);
-  console.log(total);
+
 
   const save = async (e) => {
     e.preventDefault();

@@ -57,7 +57,7 @@ function Category() {
       setfilterdata(res.data?.category);
     }
   };
-  console.log(categorydata);
+
 
   const editcategory = async (e) => {
     e.preventDefault();

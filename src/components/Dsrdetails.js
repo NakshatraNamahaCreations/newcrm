@@ -150,9 +150,6 @@ function Dsrdetails() {
     }
   };
 
-  const handleChange = (event) => {
-    setShowinapp(event.target.value);
-  };
   const handleChange1 = (event) => {
     setjobComplete(event.target.value);
   };
@@ -177,10 +174,8 @@ function Dsrdetails() {
   };
 
   const newdata = async (e) => {
-    if (jobComplete === "CANCEL") {
-      setShow(true);
-    }
-    {
+  
+
       try {
         const config = {
           url: "/adddsrcall",
@@ -213,6 +208,11 @@ function Dsrdetails() {
             type: type,
             jobComplete: jobComplete,
             amount: data.serviceCharge,
+            cancelOfficerName: admin.displayname,
+            cancelOfferNumber: admin.contactno,
+            reason: Reason,
+            techName: techName,
+            cancelDate: moment().format("MMMM Do YYYY, h:mm:ss a"),
           },
         };
         await axios(config).then(function (response) {
@@ -227,63 +227,7 @@ function Dsrdetails() {
         console.error(error);
         alert(" Not Added");
       }
-    }
-  };
-
-  const cancelService = async (e) => {
-    if (!Reason || !jobComplete == "CANCEL") {
-      alert("Please select the reason");
-    } else {
-      try {
-        const config = {
-          url: `/updatedsrdata/${dsrdata[0]?._id}`,
-          method: "post",
-          baseURL: apiURL,
-          // data: formdata,
-          headers: { "content-type": "application/json" },
-          data: {
-            serviceDate: data1,
-            serviceInfo: data,
-            serviceId: data?._id,
-            cardNo: data.cardNo,
-            category: data.category,
-            bookingDate: moment().format("DD-MM-YYYY"),
-            priorityLevel: priorityLevel,
-            appoDate: appoDate,
-            appoTime: appoTime,
-            customerFeedback: customerFeedback,
-            techComment: techComment,
-            workerName: workerName,
-            workerAmount: workerAmount,
-            daytoComplete: daytoComplete,
-            backofficerno: admin.contactno,
-            cancelOfficerName: admin.displayname,
-            cancelOfferNumber: admin.contactno,
-            reason: Reason,
-            techName: techName,
-            TechorPMorVendorID: selectedTechId,
-            TechorPMorVendorName: selectedTechName,
-            showinApp: Showinapp,
-            sendSms: sendSms,
-            jobType: jobType,
-            type: type,
-            jobComplete: jobComplete,
-            amount: data.serviceCharge,
-          },
-        };
-        await axios(config).then(function (response) {
-          if (response.status === 200) {
-            console.log("success");
-            alert("cancelled");
-
-            window.location.assign("/dsrcategory");
-          }
-        });
-      } catch (error) {
-        console.error(error);
-        alert(" Not Added");
-      }
-    }
+    
   };
 
   // 16-9
@@ -320,6 +264,11 @@ function Dsrdetails() {
           daytoComplete: daytoComplete,
           TechorPMorVendorID: selectedTechId,
           TechorPMorVendorName: selectedTechName,
+          cancelOfficerName: admin.displayname,
+          cancelOfferNumber: admin.contactno,
+          reason: Reason,
+          techName: techName,
+          cancelDate: moment().format("MMMM Do YYYY, h:mm:ss a"),
         },
       };
       await axios(config).then(function (response) {
@@ -561,6 +510,7 @@ function Dsrdetails() {
   const formattedDateTime1 = `${year1}-${month1}-${day1} ${hours1}:${minutes1}:${seconds1}`;
 
   const [reasonforresh, setreasonforresh] = useState("");
+  
   const recheduledate = async (id) => {
     if (!reasonforresh) {
       alert("Please enter reason");
@@ -578,6 +528,8 @@ function Dsrdetails() {
             ResheduleUser: admin.displayname,
             ResheduleUsernumber: admin.contactno,
             reason: reasonforresh,
+            newappoDate:data1,
+
             resDate: moment().format("MMMM Do YYYY, h:mm:ss a"),
           },
         };
@@ -679,9 +631,10 @@ function Dsrdetails() {
                   </div>
                 </div>
               </div>
-              {dsrdata[0]?.jobComplete === "NO" ? (
+              {dsrdata[0]?.jobComplete === "NO" ||
+              dsrdata[0]?.jobComplete === undefined ||
+              dsrdata[0]?.jobComplete === null ? (
                 <>
-                  {" "}
                   <button onClick={() => setShow1(true)}>
                     Reschedule date
                   </button>
@@ -691,7 +644,6 @@ function Dsrdetails() {
                         Rescheduled this services
                       </p>
                       <div style={{ fontWeight: "bold" }}>OPM Details</div>
-
                       <p style={{ marginBottom: 0 }}>{data.ResheduleUser}</p>
                       <p style={{ marginBottom: 0 }}>
                         {data.ResheduleUsernumber}
@@ -1326,12 +1278,18 @@ function Dsrdetails() {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <button className="vhs-button" onClick={handleClose}>
               Close
-            </Button>
-            <Button variant="danger" onClick={cancelService}>
-              Cancel
-            </Button>
+            </button>
+            {!dsrdata[0] ? (
+              <button className="vhs-button" onClick={Reason?newdata:""}>
+                Cancel12
+              </button>
+            ) : (
+              <button className="vhs-button" onClick={Reason?Update:""}>
+                Cancel
+              </button>
+            )}
           </Modal.Footer>
         </Modal>
 

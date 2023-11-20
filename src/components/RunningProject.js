@@ -98,7 +98,7 @@ function RunningProject() {
       );
       settreatmentData(filteredData);
       setSearchResults(filteredData);
-      console.log("getrunningdata filteredData checking address", filteredData);
+  
     }
   };
 
@@ -148,7 +148,7 @@ function RunningProject() {
     }
   };
 
-  console.log(dsrdata._id);
+
 
   const redirectURL = (data) => {
     console.log(data);

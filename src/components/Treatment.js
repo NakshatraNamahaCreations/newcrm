@@ -43,24 +43,7 @@ function Treatment() {
     gettreatment();
   }, []);
 
-   const PaintingURL = () => {
-    navigate(`/painting/${cardNo}`);
-  };
-  const PaymentURL = () => {
-    navigate(`/payment/${cardNo}`);
-  };
-  const WorkURL = () => {
-    navigate(`/work/${cardNo}`);
-  };
-
-  const treatmentURL = () => {
-    navigate(`/treatmentdetails/${cardNo}`);
-  };
-  const customerAddURL = () => {
-    navigate(`/customeradd/${cardNo}`);
-  };
-
-  console.log("customerdata", customerdata);
+ 
   const getcustomer = async () => {
     let res = await axios.get(apiURL + "/getcustomer");
     if (res.status === 200) {
@@ -227,8 +210,7 @@ function Treatment() {
     navigate(`/addcall/${id}`);
   };
 
-  console.log("dividedamtDates-===", dividedamtDates);
-  console.log("dividedamtCharges-===", dividedamtCharges);
+
 
   return (
     <div className="web">

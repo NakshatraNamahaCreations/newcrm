@@ -226,6 +226,14 @@ function Dsrcallist() {
     return filterStartTime[0]?.jobComplete;
   };
 
+  const SERVICECANCLE = (service) => {
+    const filterStartTime = dsrdata1.filter(
+      (item) =>
+        item.serviceInfo[0]?._id === service._id && item.serviceDate == date
+    );
+
+    return filterStartTime[0]?.jobComplete;
+  };
   const charge = treatmentData.map((ele) => {
     const foundCharge = ele.dividedDates.reduce((acc, ele1, index) => {
       const dividedDate = new Date(ele1.date).getDate();
@@ -262,6 +270,8 @@ function Dsrcallist() {
 
     return matchingData[0]?.charge;
   };
+
+
 
   return (
     <div className="web">
@@ -485,7 +495,8 @@ function Dsrcallist() {
                         ? "#ffeb3b"
                         : passfunction(selectedData)
                         ? "#e2e3e5"
-                        : "",
+                        :SERVICECANCLE(selectedData) ==="CANCEL"
+                        ? "#f44336":"",
                   }}
                 >
                   <Link
@@ -504,10 +515,10 @@ function Dsrcallist() {
 
                     <td>{selectedData.customerData[0]?.customerName}</td>
 
-                    {selectedData.type === "userapp" ? (
+                    {selectedData.city ? (
                       <td>{selectedData.city}</td>
                     ) : (
-                      <td>{selectedData.customer[0]?.city}</td>
+                      <td>{selectedData.customerData[0]?.city}</td>
                     )}
                     <td>
                       {selectedData?.deliveryAddress

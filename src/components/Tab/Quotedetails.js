@@ -28,8 +28,6 @@ function Quotedetails() {
   const [ajobdatarate, setajobdatarate] = useState([]);
   const [note, setnote] = useState("");
 
-  
-
   const [region, setregion] = useState("");
   const [material, setmaterial] = useState("");
   const [qty, setqty] = useState("");
@@ -56,7 +54,6 @@ function Quotedetails() {
     quotepagedata[0]?.quotedata[0]?.projectType
   );
 
-
   const [paymentDetails, setPaymentDetails] = useState([]);
   const [paymentDate, setPaymentDate] = useState(moment().format("MM-DD-YYYY"));
   const [paymentType, setPaymentType] = useState("");
@@ -65,7 +62,7 @@ function Quotedetails() {
   const [paymentAmount, setPaymentAmount] = useState("");
   const [colorcode, setcolorcode] = useState("");
   const [advpaymentdata, setAdvPaymentData] = useState([]);
-  const id = enquirydata[0]?._id;
+  
   const getquote = async () => {
     let res = await axios.get(apiURL + "/getquote");
     if ((res.status = 200)) {
@@ -103,7 +100,7 @@ function Quotedetails() {
     }
   };
   const getenquiryadd = async () => {
-    let res = await axios.get(apiURL + "/getenquiry");
+    let res = await axios.get(apiURL + "/getallnewfollow");
     if ((res.status = 200)) {
       setenquirydata(
         res.data?.enquiryadd.filter((item) => item.EnquiryId == EnquiryId)
@@ -146,10 +143,9 @@ function Quotedetails() {
     }
   };
 
-
   const addtreatment = async (e) => {
     e.preventDefault();
-    if (!region | !material | !qty | !jobName ) {
+    if (!region | !material | !qty | !jobName) {
       alert("Fill all fields");
     } else {
       try {
@@ -167,8 +163,8 @@ function Quotedetails() {
             material: material,
             job: jobName,
             qty: qty,
-            rate: rate ?rate :ajobdatarate?.rate,
-            subtotal: qty * rate ?rate :ajobdatarate?.rate,
+            rate: rate ? rate : ajobdatarate?.rate,
+            subtotal: qty && (rate ? qty * rate : qty * (ajobdatarate?.rate || 0)),
             note: note,
           },
         };
@@ -187,7 +183,7 @@ function Quotedetails() {
   const getquotepage = async () => {
     let res = await axios.get(apiURL + "/getenquiryquote");
     if ((res.status = 200)) {
-      // console.log("getenquiryquote--", res);
+    
       setquotepagedata(
         res.data?.enquiryadd.filter((item) => item.EnquiryId == EnquiryId)
       );
@@ -376,8 +372,6 @@ function Quotedetails() {
         };
         await axios(config).then(function (response) {
           if (response.status === 200) {
-     
-      
             window.location.reload();
           }
         });
@@ -478,7 +472,9 @@ function Quotedetails() {
   const [netTotal, setnetTotal] = useState(
     quotedata[0]?.netTotal !== null && quotedata[0]?.netTotal !== undefined
       ? quotedata[0]?.netTotal
-      : Gst ? total + total * 0.05 - adjustments : total - adjustments
+      : Gst
+      ? total + total * 0.05 - adjustments
+      : total - adjustments
   );
 
   return (
@@ -848,19 +844,16 @@ function Quotedetails() {
                       class="form-check-input"
                       type="checkbox"
                       checked={Gst}
-                    
                       onChange={(e) => {
                         const newGstValue = e.target.checked;
                         setGST(newGstValue);
-                      
+
                         const newNetTotal = newGstValue
                           ? total + total * 0.05 - adjustments
                           : total - adjustments;
-                      
+
                         setnetTotal(newNetTotal);
                       }}
-                      
-                     
                     />
                     <label class="vhs-sub-heading mx-3" for="flexCheckDefault">
                       YES / NO
@@ -876,8 +869,6 @@ function Quotedetails() {
                       type="text"
                       className="col-md-12 vhs-input-value"
                       value={total}
-
-                   
                     />
                   </div>
                 </div>{" "}
@@ -890,14 +881,13 @@ function Quotedetails() {
                       onChange={(e) => {
                         const newAdjustment = parseFloat(e.target.value);
                         setadjustment(newAdjustment);
-                      
+
                         const newNetTotal = Gst
                           ? total + total * 0.05 - newAdjustment
                           : total - newAdjustment;
-                      
+
                         setnetTotal(newNetTotal);
                       }}
-                      
                       defaultValue={quotedata[0]?.adjustments}
                     />
                   </div>
@@ -909,7 +899,6 @@ function Quotedetails() {
                       type="text"
                       className="col-md-12 vhs-input-value"
                       value={netTotal}
-                      
                       onChange={(e) => setnetTotal(e.target.value)}
                     />
                   </div>
@@ -1108,7 +1097,7 @@ function Quotedetails() {
               <div className="row pt-3 justify-content-center">
                 <div className="col-md-3 ">
                   <button className="vhs-button " onClick={addquotefollowup}>
-                    Save 
+                    Save
                   </button>
                 </div>
               </div>

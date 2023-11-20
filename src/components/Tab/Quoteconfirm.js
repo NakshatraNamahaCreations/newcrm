@@ -27,14 +27,13 @@ function Quoteconfirmed() {
   const [searchBookedby,setsearchBookedby] = useState("");
 
 
-  console.log("enquiryflwdata--",enquiryflwdata)
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
 
-    // Get today's date in the format 'YYYY-MM-DD'
-    const today = new Date().toISOString().split("T")[0];
+ 
   useEffect(() => {
     getenquiryadd();
   }, []);

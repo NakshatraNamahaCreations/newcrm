@@ -28,14 +28,13 @@ function Quoteappconfirmed() {
   const [searchBookedby,setsearchBookedby] = useState("");
 const [Type, setType] = useState("")
 
-  console.log("enquiryflwdata--",enquiryflwdata)
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
 
-    // Get today's date in the format 'YYYY-MM-DD'
-    const today = new Date().toISOString().split("T")[0];
+
   useEffect(() => {
     getenquiryadd();
   }, []);
@@ -44,7 +43,7 @@ const [Type, setType] = useState("")
     let res = await axios.get(apiURL + "/getenquirydata");
     if (res.status === 200) {
       setenquiryflwdata(res.data?.quotefollowup.filter((item) => item.response === "Confirmed"));
-      setSearchResults(res.data?.quotefollowup.filter((item) => item.response === "Confirmed")); // Update the searchResults state with the full data
+      setSearchResults(res.data?.quotefollowup.filter((item) => item.response === "Confirmed")); 
     }
   };
   let i = 0;
@@ -193,7 +192,14 @@ const [Type, setType] = useState("")
   ]);
 
   const click = (data) => {
-    navigate(`/quotedetails/${data.EnquiryId}`);
+     if (data) {
+      window.location.assign(`/quotedetails/?id=${data.EnquiryId}`, {
+        state: { data: data },
+      });
+    } else {
+      // Handle the case when data is null or undefined
+      // For example, show an error message or perform a different action
+    }
   };
 
    // Pagination logic
