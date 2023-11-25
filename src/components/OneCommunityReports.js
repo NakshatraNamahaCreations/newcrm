@@ -11,7 +11,7 @@ import { format } from "date-fns";
 function OneCommunityReports() {
   const location = useLocation();
   const { data } = location.state || null;
-  console.log("1 community", data);
+
   const apiURL = process.env.REACT_APP_API_URL;
   const [filteredCategoryData, setFilteredCategoryData] = useState([]);
   const [fromDate, setFromData] = useState("");

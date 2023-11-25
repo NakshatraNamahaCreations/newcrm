@@ -44,7 +44,7 @@ function Technician() {
     data?.category || []
   );
   const [selectedCatagory1, setSelectedCatagory1] = useState([]);
-  console.log("data", data);
+
   const [techniciandata, settechniciandata] = useState([]);
   const [citydata, setcitydata] = useState([]);
   const [categorydata, setcategorydata] = useState([]);
@@ -52,23 +52,22 @@ function Technician() {
   const [filterdata, setfilterdata] = useState([]);
 
   const apiURL = process.env.REACT_APP_API_URL;
-  const handleclick = () => {
-    setIsVisible(!isVisible);
-  };
+
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const handleClick = (divNum) => () => {
-    setSelected(divNum);
-  };
+
+
+
+
   const addtechnician = async (e) => {
     e.preventDefault();
 
     if (
       !city ||
-      !selectedCatagory ||
+      !category1 ||
       !vhsname ||
       !number ||
       !password ||
@@ -86,7 +85,7 @@ function Technician() {
           headers: { "content-type": "application/json" },
           data: {
             Type: Type,
-            category: selectedCatagory,
+            category: category1,
             vhsname: vhsname,
             smsname: smsname,
             number: number,
@@ -223,12 +222,32 @@ function Technician() {
     setSelectedCatagory1(data.category)
     handleShow();
   };
+  // useEffect(() => {
+  //   const result = techniciandata.filter((item) => {
+  //     return item.vhsname.toLowerCase().match(search.toLowerCase());
+  //   });
+  //   setfilterdata(result);
+  // }, [search]);
+
+
   useEffect(() => {
-    const result = techniciandata.filter((item) => {
-      return item.vhsname.toLowerCase().match(search.toLowerCase());
+    const filteredData = techniciandata.filter((item) => {
+      const searchString = search.toLowerCase();
+      const vhsname = item.vhsname?.toLowerCase().includes(searchString);
+      const smsname = item.smsname?.toLowerCase().includes(searchString);
+      const number = item.number?.toLowerCase().includes(searchString);
+      const Type =
+        item.Type?.toLowerCase().includes(searchString);
+      const city = item.city
+        ?.toLowerCase()
+        .includes(searchString);
+      
+      return vhsname ||smsname || Type || city ||number;
     });
-    setfilterdata(result);
-  }, [search]);
+
+    setfilterdata(filteredData);
+  }, [search, techniciandata]);
+
 
   const edittechnician = async (e) => {
     e.preventDefault();
@@ -240,7 +259,7 @@ function Technician() {
         headers: { "content-type": "application/json" },
         data: {
           Type: Type1,
-          category: category1,
+          category: selectedCatagory,
           vhsname: vh,
           smsname: smsname1,
           number: number1,
@@ -265,6 +284,7 @@ function Technician() {
   const onSelectCatagory = (selectedList, selectedItem) => {
     // Handle select event
     setcategory1(selectedList);
+    console.log(selectedList)
   };
 
   const onEditCatagory = (selectedList, selectedItem) => {
@@ -401,6 +421,7 @@ function Technician() {
                     <div className="group pt-1">
                       <input
                         type="text"
+                      
                         className="col-md-12 vhs-input-value"
                         onChange={(e) => setlanguagesknow(e.target.value)}
                       />
@@ -448,7 +469,7 @@ function Technician() {
           <div className="mt-5">
             <input
               type="text"
-              defaultValue="Search here.."
+              placeholder="Search Type or name or city number"
               className="w-25 form-control"
               value={search}
               onChange={(e) => setsearch(e.target.value)}

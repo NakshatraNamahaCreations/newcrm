@@ -157,7 +157,7 @@ function Quotedetails() {
           headers: { "content-type": "application/json" },
           data: {
             EnquiryId: EnquiryId,
-            // userid: data._id,
+            number:enquirydata[0]?.contact1,
             category: category,
             region: region,
             material: material,
@@ -316,6 +316,7 @@ function Quotedetails() {
           headers: { "content-type": "application/json" },
           data: {
             EnquiryId: EnquiryId,
+            number:enquirydata[0]?.contact1,
             GST: Gst,
             projectType: projecttype,
             qamt: netTotal,
@@ -359,6 +360,7 @@ function Quotedetails() {
             EnquiryId: EnquiryId,
             GST: Gst,
             projectType: projecttype,
+            number:enquirydata[0]?.contact1,
             qamt: netTotal,
             adjustments: adjustments,
             SUM: total,
@@ -399,9 +401,33 @@ function Quotedetails() {
     setnetTotal(adjustedNetTotal);
   }, [adjustments, Gst]);
 
-  const postconvertcustomer = () => {
-    navigate(`/convertcustomer/${EnquiryId}`);
+
+  const postconvertcustomer = async (e) => {
+    e.preventDefault();
+    try {
+      const phoneNumber = enquirydata[0]?.contact1;
+  
+      if (phoneNumber) {
+        const res = await axios.post(apiURL + `/findcustomerwithnumber/${phoneNumber}`);
+  
+        if (res.status === 200) {
+          const customerData = res.data.customer;
+  
+          navigate(`/customersearchdetails/${customerData?._id}`);
+         
+    
+        }
+      } else {
+        console.log('Phone number not available');
+        navigate(`/convertcustomer/${enquirydata[0]?.EnquiryId}`);
+      }
+    } catch (error) {
+      console.error("Error fetching customer:", error);
+      // Handle errors accordingly
+    }
   };
+  
+  
 
   // Assuming quotepagedata is an array of objects with quotefollowup property
   const confirmedResponses = quotepagedata[0]?.quotefollowup.filter(

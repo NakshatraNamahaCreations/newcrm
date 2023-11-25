@@ -84,6 +84,13 @@ function Convertcustomer() {
             rbhf: rbhf,
             cnap: cnap,
             lnf: lnf,
+            deliveryAddress:{
+              landmark:cnap,
+              platNo:rbhf,
+              saveAs:mainarea,
+              address:lnf
+
+            },
             mainArea: mainarea,
             city: city ? city : data[0]?.city,
             pinCode: pincode,
@@ -280,7 +287,7 @@ function Convertcustomer() {
                   </div>
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">
-                      Colony / Nagar / Apartment / Plot Name
+               Landmark
                       <span className="text-danger"> *</span>
                     </div>
                     <div className="group pt-1">
@@ -294,7 +301,7 @@ function Convertcustomer() {
                   </div>
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">
-                      Landmark / Near By Famous Place
+                     Address
                       <span className="text-danger">*</span>
                     </div>
                     <div className="group pt-1">
@@ -308,7 +315,7 @@ function Convertcustomer() {
                   </div>
 
                   <div className="col-md-4 pt-3">
-                    <div className="vhs-input-label">Main Area</div>
+                    <div className="vhs-input-label">Office/Home</div>
                     <div className="group pt-1">
                       <input
                         type="text"

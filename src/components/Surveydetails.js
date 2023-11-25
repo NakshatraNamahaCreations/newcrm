@@ -36,7 +36,7 @@ function Createquote() {
   };
   const [serviceId, setServiceId] = useState("");
 
-  console.log("dsta", technician);
+
   useEffect(() => {
     gettechnician();
   }, []);
@@ -87,6 +87,7 @@ function Createquote() {
     getServicebyCategory();
   }, [data?.category]);
 
+
   useEffect(() => {
     const getSlotsByService = async () => {
       try {
@@ -104,7 +105,7 @@ function Createquote() {
     if (serviceId) {
       getSlotsByService();
     }
-  }, [serviceId]);
+  }, [serviceId,data]);
 
   useEffect(() => {
     getwhatsapptemplate();
@@ -261,10 +262,10 @@ function Createquote() {
         state: { data: data },
       });
     } else {
-      // Handle the case when data is null or undefined
-      // For example, show an error message or perform a different action
+     
     }
   };
+ 
 
   return (
     <div className="web">

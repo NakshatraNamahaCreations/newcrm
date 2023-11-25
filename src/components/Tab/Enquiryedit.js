@@ -57,7 +57,7 @@ const navigate=useNavigate();
       });
       if (res.status === 200) {
         setServiceData(res.data?.serviceData);
-        console.log("res.data?.serviceData",res.data?.serviceData)
+     
       } else {
         setServiceData([]);
       }

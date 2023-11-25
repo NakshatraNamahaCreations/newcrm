@@ -25,7 +25,7 @@ function Login() {
       };
       await axios(config).then(function (response) {
         if (response.status === 200) {
-          alert("Login Success");
+          // alert("Login Success");
           sessionStorage.setItem("admin", JSON.stringify(response.data.user));
 
           window.location.assign("/home");

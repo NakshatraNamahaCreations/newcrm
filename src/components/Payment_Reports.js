@@ -99,7 +99,7 @@ function Payment_Reports() {
       );
       settreatmentData(filteredData);
       setSearchResults(filteredData);
-      console.log("filteredData", filteredData);
+    
     }
   };
   const updatetoclose = async (id) => {
@@ -117,7 +117,7 @@ function Payment_Reports() {
       await axios(config);
       // Remove the closed row from the state
       const updatedData = treatmentdata.filter((item) => item._id !== id);
-      console.log("updatedData", updatedData);
+   
       settreatmentData(updatedData);
       alert("Updated");
       // Reload the page
@@ -128,10 +128,10 @@ function Payment_Reports() {
     }
   };
 
-  console.log(dsrdata._id);
+
 
   const redirectURL = (data) => {
-    console.log(data);
+
     navigate(`/paymentreportdetailedview/${data.cardNo}`);
   };
 

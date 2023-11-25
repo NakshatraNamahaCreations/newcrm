@@ -90,6 +90,7 @@ function DSRcategory() {
     postAllJobs();
   }, [dCategory]);
 
+
   const postAllJobs = async () => {
     try {
       const res = await axios.post(apiURL + "/postservicecat", {
@@ -133,7 +134,7 @@ function DSRcategory() {
   const handleSelectEvent = (event) => {
     const selectedDate = moment(event.start).format("YYYY-MM-DD");
     const selectedData = dsrdata.filter((item) => item.dividedDates);
-    console.log("selectedDatainDSRCatagory", selectedData); // Add this line to check the value
+   
     navigate(`/dsrcallist/${selectedDate}/${dCategory}`, {
       state: { data: selectedData },
     });

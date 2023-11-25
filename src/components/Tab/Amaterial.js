@@ -155,7 +155,7 @@ function Amaterial() {
     })
       .then(function (response) {
         //handle success
-        console.log(response);
+
         alert("Deleted successfully");
         window.location.reload();
       })

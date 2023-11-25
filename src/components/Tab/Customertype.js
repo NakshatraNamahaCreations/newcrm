@@ -64,7 +64,7 @@ function Customertype() {
     })
       .then(function (response) {
         //handle success
-        console.log(response);
+      
         alert("Deleted successfully");
         window.location.reload();
       })

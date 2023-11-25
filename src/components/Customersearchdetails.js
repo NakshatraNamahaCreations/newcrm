@@ -19,7 +19,7 @@ function Customersearchdetails() {
   const [categoryData, setCategoryData] = useState([]);
   const [serviceFrequency, setserviceFrequency] = useState(1);
   const [expiryDate, setexpiryDate] = useState("00-00-0000");
-  const [category, setcategory] = useState("");
+  // const [category, setcategory] = useState("");
   const [firstserviceDate, setfirstserviceDate] = useState("00-00-0000");
   const [contractType, setcontractType] = useState("");
   const [serviceId, setServiceId] = useState("");
@@ -57,6 +57,13 @@ function Customersearchdetails() {
   const handleShow1 = () => setShow1(true);
 
   const [selectedAddress, setSelectedAddress] = useState("");
+  const [category, setcategory] = useState(editenable.category);
+
+  console.log("selectedAddress",selectedAddress)
+
+  const handleCategoryChange = (e) => {
+    setcategory(e.target.value);
+  };
 
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
@@ -65,6 +72,10 @@ function Customersearchdetails() {
   const handleRowClick = (address) => {
     setSelectedAddress(address);
   };
+
+
+ 
+
 
   useEffect(() => {
     const getcustomer = async () => {
@@ -174,7 +185,6 @@ function Customersearchdetails() {
           });
 
           settreatmentdata(filteredData);
-          console.log("filteredData", filteredData);
         }
       } catch (error) {
         console.log("error", error);
@@ -327,7 +337,7 @@ function Customersearchdetails() {
             category: category,
             contractType: contractType,
             service: treatment,
-            GrandTotal:serviceCharge,
+            GrandTotal: serviceCharge,
             serviceID: serviceId,
             slots: selectedSlot,
             selectedSlotText: selectedSlot,
@@ -394,7 +404,30 @@ function Customersearchdetails() {
         method: "post",
         baseURL: apiURL,
         headers: { "content-type": "application/json" },
-        data: {},
+        data: {
+          customerData: customerdata[0],
+
+ 
+
+          userId: customerdata[0]._id,
+          category: category,
+    
+          service: treatment,
+          GrandTotal: serviceCharge,
+          serviceID: serviceId,
+          slots: selectedSlot,
+          selectedSlotText: selectedSlot,
+          serviceCharge: serviceCharge,
+
+
+          desc: desc,
+
+  
+
+          communityId: oneCommunity._id, //this line
+          oneCommunity: communityPercentage, //thi line
+          BackofficeExecutive: admin.displayname,
+        },
       };
       await axios(config).then(function (response) {
         if (response.status === 200) {
@@ -409,7 +442,6 @@ function Customersearchdetails() {
   };
 
   const addcustomeraddresss = async (e) => {
-
     if (!Address || !customerdata[0]?._id || !landmark || !streetName) {
       alert("Please fill neccesary fields");
     } else {
@@ -472,8 +504,7 @@ function Customersearchdetails() {
     })
       .then(function (response) {
         //handle success
-        console.log(response);
-        alert("Deleted successfully");
+
         window.location.reload();
       })
       .catch(function (error) {
@@ -495,7 +526,7 @@ function Customersearchdetails() {
       console.error("Content template is empty. Cannot proceed.");
       return;
     }
-    console.log("91" + customerdata[0]?.mainContact);
+
     const content = contentTemplate.replace(
       /\{Customer_name\}/g,
       customerdata[0]?.customerName
@@ -686,11 +717,7 @@ function Customersearchdetails() {
                           name="material"
                         >
                           <option>--select--</option>
-                          {/* {categoryData.map((category, index) => (
-                            <option key={index} value={category.category}>
-                              {category.category}
-                            </option>
-                          ))} */}
+
                           {admin?.category.map((category, index) => (
                             <option key={index} value={category.name}>
                               {category.name}
@@ -750,7 +777,7 @@ function Customersearchdetails() {
                           <option>--select--</option>
                           {serviceDetails.map((item) => (
                             <option key={item.id} value={item._id}>
-                              {item.serviceName}/{item.servicetitle}
+                              {item.Subcategory}-{item.serviceName}
                             </option>
                           ))}
                         </select>
@@ -976,10 +1003,11 @@ function Customersearchdetails() {
                         </div>
                         <select
                           className="col-md-12 vhs-input-value"
-                          onChange={(e) => setcategory(e.target.value)}
-                          name="material"
+                          onChange={handleCategoryChange}
+                          value={category || editenable.category}
                         >
-                          <option>{editenable.category}</option>
+                          <option>--select--</option>
+
                           {admin?.category.map((category, index) => (
                             <option key={index} value={category.name}>
                               {category.name}
@@ -998,13 +1026,6 @@ function Customersearchdetails() {
                           onChange={(e) => setcontractType(e.target.value)}
                         >
                           <option>{editenable.contractType}</option>
-
-                          <option value="One Time" disabled>
-                            One Time
-                          </option>
-                          <option value="AMC" disabled>
-                            AMC
-                          </option>
                         </select>
                       </div>
 
@@ -1015,101 +1036,42 @@ function Customersearchdetails() {
                         </div>
                         <select
                           className="col-md-12 vhs-input-value"
-                          onChange={(e) => settreatment(e.target.value)}
+                          onChange={(e) => {
+                            const selectedService = serviceDetails.find(
+                              (item) => item._id === e.target.value
+                            );
+
+                            if (selectedService) {
+                              setServiceId(e.target.value);
+                              const serviceName =
+                                selectedService.serviceName || "";
+                              const Subcategory =
+                                selectedService.Subcategory || "";
+                              const combinedTreatment = `${Subcategory}-${serviceName}`;
+
+                              settreatment(combinedTreatment);
+                              setSelectedVideoLink(
+                                selectedService.videoLink || ""
+                              );
+                            } else {
+                              console.log(
+                                "Service not found for the selected ID."
+                              );
+                            }
+                          }}
                           name="material"
                         >
-                          <option>--select--</option>
-                          {servicedata.map((item) => (
-                            <option value={item.subcategory}>
-                              {item.subcategory}
+                          <option>{editenable?.service}</option>
+                          {serviceDetails.map((item) => (
+                            <option key={item.id} value={item._id}>
+                              {item.Subcategory}-{item.serviceName}
                             </option>
                           ))}
                         </select>
                       </div>
                     </div>
-                    {contractType === "One Time" ? (
+                    {editenable?.contractType === "One Time" ? (
                       <>
-                        <div className="row mt-2">
-                          <div className="col-md-4 pt-3">
-                            <div className="vhs-input-label">
-                              Service Charge{" "}
-                              <span className="text-danger">*</span>
-                            </div>
-                            <input
-                              type="number"
-                              name="qty"
-                              className="col-md-12 vhs-input-value"
-                              onChange={(e) => setserviceCharge(e.target.value)}
-                            />
-                          </div>
-                          <div className="col-md-4 pt-3">
-                            <div className="vhs-input-label">
-                              Date of Service
-                            </div>
-                            <input
-                              type="date"
-                              name="qty"
-                              className="col-md-12 vhs-input-value"
-                              onChange={(e) =>
-                                setfirstserviceDate(e.target.value)
-                              }
-                            />
-                          </div>
-                          <div className="col-md-4 pt-3">
-                            <div className="vhs-input-label">Description</div>
-                            <textarea
-                              type="text"
-                              name="desc"
-                              className="col-md-12 vhs-input-value"
-                              onChange={(e) => setdesc(e.target.value)}
-                              rows={5}
-                              cols={10}
-                            />
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="row mt-2">
-                          <div className="col-md-4 pt-3">
-                            <div className="vhs-input-label">
-                              Service Frequency
-                            </div>
-
-                            <input
-                              type="number"
-                              name="qty"
-                              className="col-md-12 vhs-input-value"
-                              onChange={(e) =>
-                                setserviceFrequency(e.target.value)
-                              }
-                              defaultValue={editenable.serviceFrequency}
-                            />
-                            <span style={{ fontSize: "10px" }}>
-                              (Total No. Of Services In Given Contract Period)
-                            </span>
-                          </div>
-                          <div className="col-md-4 pt-3">
-                            <div className="vhs-input-label">Start Date</div>
-                            <input
-                              type="date"
-                              name="startdate"
-                              className="col-md-12 vhs-input-value"
-                              onChange={(e) => setdateofService(e.target.value)}
-                              defaultValue={editenable.startDate}
-                            />
-                          </div>
-                          <div className="col-md-4 pt-3">
-                            <div className="vhs-input-label">Expiry Date</div>
-                            <input
-                              type="date"
-                              name="startdate"
-                              className="col-md-12 vhs-input-value"
-                              onChange={(e) => setexpiryDate(e.target.value)}
-                              defaultValue={editenable.expiryDate}
-                            />
-                          </div>
-                        </div>
                         <div className="row mt-2">
                           <div className="col-md-4 pt-3">
                             <div className="vhs-input-label">
@@ -1124,19 +1086,16 @@ function Customersearchdetails() {
                               defaultValue={editenable.serviceCharge}
                             />
                           </div>
-
                           <div className="col-md-4 pt-3">
                             <div className="vhs-input-label">
-                              1st Service Date{" "}
+                              Date of Service
                             </div>
                             <input
                               type="date"
                               name="qty"
                               className="col-md-12 vhs-input-value"
-                              onChange={(e) =>
-                                setfirstserviceDate(e.target.value)
-                              }
-                              defaultValue={editenable.firstserviceDate}
+                              onChange={(e) => setdateofService(e.target.value)}
+                              defaultValue={editenable.dateofService}
                             />
                           </div>
                           <div className="col-md-4 pt-3">
@@ -1153,7 +1112,69 @@ function Customersearchdetails() {
                           </div>
                         </div>
                       </>
+                    ) : (
+                      <>
+                      <div className="row mt-2">
+                        <div className="col-md-4 pt-3">
+                          <div className="vhs-input-label">
+                            Service Charge{" "}
+                            <span className="text-danger">*</span>
+                          </div>
+                          <input
+                            type="number"
+                            name="qty"
+                            className="col-md-12 vhs-input-value"
+                            onChange={(e) => setserviceCharge(e.target.value)}
+                            defaultValue={editenable.serviceCharge}
+                          />
+                        </div>
+                        <div className="col-md-4 pt-3">
+                          <div className="vhs-input-label">
+                            Date of Service
+                          </div>
+                          <input
+                            type="date"
+                            name="qty"
+                            className="col-md-12 vhs-input-value"
+                            onChange={(e) => setdateofService(e.target.value)}
+                            defaultValue={editenable.dateofService}
+                          />
+                        </div>
+                        <div className="col-md-4 pt-3">
+                          <div className="vhs-input-label">Description</div>
+                          <textarea
+                            type="text"
+                            name="desc"
+                            className="col-md-12 vhs-input-value"
+                            onChange={(e) => setdesc(e.target.value)}
+                            rows={5}
+                            cols={10}
+                            defaultValue={editenable.desc}
+                          />
+                        </div>
+                      </div>
+                    </>
                     )}
+
+                    <div className="col-md-4 mt-2">
+                      <div className="vhs-input-label">Slots</div>
+                      <select
+                        className="col-md-12 vhs-input-value"
+                        onChange={(e) => setSelectedSlot(e.target.value)}
+                        name="material"
+                      >
+                        <option>{editenable.selectedSlotText}</option>
+                        {serviceSlots
+                          ?.filter(
+                            (slot) => slot.slotCity === customerdata[0]?.city // Filter based on city match
+                          )
+                          .map((slot, index) => (
+                            <option key={index} value={`${slot.startTime}`}>
+                              {`${slot.startTime} `}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
 
                     <div className="col-md-4 pt-3 mt-4 justify-content-center">
                       <div className="col-md-2 ">
@@ -1527,6 +1548,29 @@ function Customersearchdetails() {
         </Modal.Header>
         <Modal.Body>
           <div className="row px-3">
+{customerdata.map((item,index)=>(
+  
+
+          <div key={index}>
+                  <div
+                    className="col-md-12 d-flex"
+                    onClick={() => handleRowClick(item)}
+                  >
+                    <div className="mt-2">
+                      <input
+                        type="radio"
+                        checked={selectedAddress === item}
+                        onChange={() => handleAddressSelect(item)}
+                        style={{ width: 40, fontSize: "20px", height: "20px" }}
+                      />
+                    </div>
+                    <div className="d-flex">
+                      {`${item.rbhf}, ${item.cnap}, ${item.lnf}`}
+                    </div>
+                  
+                  </div>
+                </div>
+                ))}
             {customerAddressdata.length > 0 ? (
               customerAddressdata.map((address, index) => (
                 <div key={index}>
@@ -1539,7 +1583,7 @@ function Customersearchdetails() {
                         type="radio"
                         checked={selectedAddress === address}
                         onChange={() => handleAddressSelect(address)}
-                        style={{ width: 40, fontSize: "20px",height:"20px" }}
+                        style={{ width: 40, fontSize: "20px", height: "20px" }}
                       />
                     </div>
                     <div className="d-flex">

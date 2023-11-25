@@ -62,7 +62,7 @@ const getenquiry = async () => {
   }
 };
 const enquirydetail = (data) => {
-  console.log(data.EnquiryId);
+
   navigate(`/enquirydetail/${data.EnquiryId}`);
 };
 useEffect(() => {

@@ -151,8 +151,7 @@ function Enquiryadd() {
             const enquiryId = response.data.EnquiryId;
 
             const responce = response.data;
-            console.log(response.data);
-            console.log(JSON.stringify(responce.data));
+         
             makeApiCall(getTemplateDatails, contact1);
             navigate(
               `/enquirydetail/${latestEnquiryId ? latestEnquiryId + 1 : 1}`

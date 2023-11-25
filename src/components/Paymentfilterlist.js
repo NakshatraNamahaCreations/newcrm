@@ -382,7 +382,7 @@ function Paymentfilterlist() {
 
                   <td>{selectedData.paymentMode}</td>
 
-                  {selectedData?.deliveryAddress  ? (
+                  {selectedData?.deliveryAddress ? (
                     <td>
                       {selectedData?.deliveryAddress?.platNo},
                       {selectedData?.deliveryAddress?.landmark},
@@ -491,9 +491,9 @@ function Paymentfilterlist() {
                     {selectedData.paymentData.some(
                       (i) =>
                         i.paymentType === "Customer" &&
-                        i.serviceId === selectedData._id 
-                        // &&
-                        // i.serviceDate === date
+                        i.serviceId === selectedData._id
+                      // &&
+                      // i.serviceDate === date
                     ) ? (
                       <div>
                         {selectedData.paymentData
@@ -501,12 +501,12 @@ function Paymentfilterlist() {
                             (i) =>
                               i.paymentType === "Customer" &&
                               i.serviceId === selectedData._id
-                              //  &&
-                              // i.serviceDate === date
+                            //  &&
+                            // i.serviceDate === date
                           )
                           .map((i) => (
                             <p key={i._id} className="mb-0 text-right">
-                              ({i.paymentDate}) {i.amount}
+                              ({i.paymentDate}) {i.amount}({i.paymentMode})
                             </p>
                           ))}
                         <div>
@@ -518,9 +518,9 @@ function Paymentfilterlist() {
                                 selectedData.paymentData.filter(
                                   (i) =>
                                     i.serviceId === selectedData._id &&
-                                    i.paymentType === "Customer" 
-                                    // &&
-                                    // i.serviceDate === date
+                                    i.paymentType === "Customer"
+                                  // &&
+                                  // i.serviceDate === date
                                 )
                               )}
                             </b>
@@ -532,9 +532,9 @@ function Paymentfilterlist() {
                                 selectedData.paymentData.filter(
                                   (i) =>
                                     i.paymentType === "Customer" &&
-                                    i.serviceId === selectedData._id 
-                                    // &&
-                                    // i.serviceDate === date
+                                    i.serviceId === selectedData._id
+                                  // &&
+                                  // i.serviceDate === date
                                 ),
                                 selectedData.dividedamtCharges
                               )}

@@ -510,17 +510,16 @@ function Dsrdetails() {
   const formattedDateTime1 = `${year1}-${month1}-${day1} ${hours1}:${minutes1}:${seconds1}`;
 
   const [reasonforresh, setreasonforresh] = useState("");
-  
+
   const recheduledate = async (id) => {
     if (!reasonforresh) {
-      alert("Please enter reason");
+      alert("Please enter a reason");
     } else {
       try {
         const config = {
           url: `/recheduledate/${data?._id}`,
           method: "post",
           baseURL: apiURL,
-          // data: formdata,
           headers: { "content-type": "application/json" },
           data: {
             appoDate: appoDate,
@@ -528,25 +527,38 @@ function Dsrdetails() {
             ResheduleUser: admin.displayname,
             ResheduleUsernumber: admin.contactno,
             reason: reasonforresh,
-            newappoDate:data1,
-
+            newappoDate: data1,
             resDate: moment().format("MMMM Do YYYY, h:mm:ss a"),
           },
         };
-        await axios(config).then(function (response) {
-          if (response.status === 200) {
-            setShow1(false);
-
-            alert("Updated");
-            window.location.assign("/dsrcategory");
-          }
-        });
+  
+        const response = await axios(config);
+  
+        if (response.status === 200) {
+          setShow1(false);
+          alert("Updated");
+          window.location.assign("/dsrcategory");
+        } else {
+          // Handle other status codes
+          alert(`Unexpected status: ${response.status}`);
+        }
       } catch (error) {
-        console.error(error);
-        alert("Somthing went wrong");
+        if (error.response) {
+       
+          alert(`Server error: ${error.response.data.message}`);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log(error.request);
+          alert("No response from the server");
+        } else {
+          // Something happened in setting up the request that triggered an error
+          console.error("Error", error.message);
+          alert("Something went wrong");
+        }
       }
     }
   };
+  
 
   return (
     <div className="web">
@@ -667,21 +679,21 @@ function Dsrdetails() {
                   <div className="vhs-input-label">Customer Name</div>
                   <div className="group pt-1">
                     <div className="vhs-non-editable">
-                      {data.customer[0]?.customerName}
+                      {data.customerData[0]?.customerName}
                     </div>
                   </div>
                 </div>
                 <div className="col-md-4">
                   <div className="vhs-input-label">Card No</div>
                   <div className="group pt-1">
-                    <div className="vhs-non-editable">{data.cardNo}</div>
+                    <div className="vhs-non-editable">{data.customerData[0]?.cardNo}</div>
                   </div>
                 </div>
                 <div className="col-md-4">
                   <div className="vhs-input-label">Contact 1</div>
                   <div className="group pt-1">
                     <div className="vhs-non-editable">
-                      {data.customer[0]?.mainContact}{" "}
+                      {data.customerData[0]?.mainContact}{" "}
                       <a
                         href={`https://wa.me/+91${data.customerData[0]?.mainContact}`}
                         target="_blank"
@@ -735,7 +747,7 @@ function Dsrdetails() {
                   <div className="vhs-input-label"> Email Id</div>
                   <div className="group pt-1">
                     <div className="vhs-non-editable">
-                      {data.customer[0]?.email}
+                      {data.customerData[0]?.email}
                     </div>
                   </div>
                 </div>
@@ -746,9 +758,9 @@ function Dsrdetails() {
                   <div className="vhs-input-label">City</div>
                   <div className="group pt-1">
                     <div className="vhs-non-editable">
-                      {data.customer[0]?.city === null ||
-                      data.customer[0]?.city === undefined ? (
-                        <>{data.customer[0]?.city}</>
+                      {data.customerData[0]?.city === null ||
+                      data.customerData[0]?.city === undefined ? (
+                        <>{data.customerData[0]?.city}</>
                       ) : (
                         <>{data.city}</>
                       )}

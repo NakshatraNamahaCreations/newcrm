@@ -20,7 +20,7 @@ function Customerimport() {
     let res = await axios.get(apiURL + "/getcustomer");
     if (res.status === 200) {
       setcustomerdata(res.data?.customers);
-      console.log(res.data.customers);
+     
     }
   };
 
@@ -31,11 +31,11 @@ function Customerimport() {
     if (confirm) {
       try {
         const responce = await axios.post(apiURL + "/deletetercustomer/" + id);
-        console.log(responce);
+   
         alert("Deleted successfully");
         window.location.reload();
       } catch (error) {
-        console.log(error.response.data);
+
         alert("Something went wrong");
       }
     }
@@ -125,8 +125,7 @@ function Customerimport() {
       /* Convert array of arrays */
       const data = XLSX.utils.sheet_to_csv(ws, { header: 1 });
       /* Update state */
-      console.log("Data>>>" + data); // shows that excel data is read
-      console.log(convertToJson(data)); // shows data in json format
+    
       setImportXLSheet(JSON.parse(convertToJson(data)));
     };
     reader.readAsBinaryString(excel);

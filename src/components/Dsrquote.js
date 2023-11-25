@@ -21,7 +21,7 @@ function Dsrquote() {
   // const [section2data, setsection2data] = useState([]);
   const [termsAndCondition, setTemsAndCondition] = useState([]);
 
-  console.log("data---------------------", data);
+
 
   useEffect(() => {
     gettermsgroup();

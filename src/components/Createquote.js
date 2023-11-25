@@ -9,7 +9,7 @@ import moment from "moment";
 function Createquote() {
   const admin = JSON.parse(sessionStorage.getItem("admin"));
   const { EnquiryId } = useParams();
-  console.log(EnquiryId);
+
   const navigate = useNavigate();
   const [materialdata, setmaterialdata] = useState([]);
   const [regiondata, setregiondata] = useState([]);
@@ -263,7 +263,7 @@ function Createquote() {
       })
       .catch(function (error) {
         //handle error
-        console.log(error.response.data);
+   
       });
   };
 
@@ -385,7 +385,7 @@ function Createquote() {
     navigate(`/convertcustomer/${EnquiryId}`);
   };
 
-  console.log(quotepagedata);
+
   // Assuming quotepagedata is an array of objects with quotefollowup property
   const confirmedResponses = quotepagedata[0]?.quotefollowup.filter(
     (item) => item.response === "Confirmed"

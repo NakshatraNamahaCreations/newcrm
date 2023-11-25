@@ -32,7 +32,7 @@ function B2Bdetails() {
 
   const apiURL = process.env.REACT_APP_API_URL;
 
-  console.log("color code", filterdata);
+
 
   useEffect(() => {
     getresponse();

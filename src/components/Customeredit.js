@@ -112,7 +112,7 @@ function Customeredit() {
   const getuser = async () => {
     let res = await axios.get(apiURL + "/master/getuser");
     if ((res.status = 200)) {
-      console.log(res.data.masteruser);
+   
       setuserdata(res.data?.masteruser);
     }
   };

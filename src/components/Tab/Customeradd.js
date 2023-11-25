@@ -67,7 +67,13 @@ function Customeradd() {
           data: {
             customerName: customername,
             contactPerson: contactperson,
+            deliveryAddress:{
+              landmark:cnap,
+              platNo:rbhf,
+              saveAs:mainarea,
+              address:lnf
 
+            },
             mainContact: maincontact,
             alternateContact: alternatenumber,
             email: email,
@@ -133,7 +139,7 @@ function Customeradd() {
   const getuser = async () => {
     let res = await axios.get(apiURL + "/master/getuser");
     if ((res.status = 200)) {
-      console.log(res.data.masteruser);
+
       setuserdata(res.data?.masteruser);
     }
   };
@@ -268,7 +274,7 @@ function Customeradd() {
                   </div>
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">
-                      Colony / Nagar / Apartment / Plot Name
+                      Landmark
                       <span className="text-danger"> *</span>
                     </div>
                     <div className="group pt-1">
@@ -282,7 +288,7 @@ function Customeradd() {
                   </div>
                   <div className="col-md-4 pt-3">
                     <div className="vhs-input-label">
-                      Landmark / Near By Famous Place
+                  Full  Address
                       <span className="text-danger">*</span>
                     </div>
                     <div className="group pt-1">
@@ -296,7 +302,7 @@ function Customeradd() {
                   </div>
 
                   <div className="col-md-4 pt-3">
-                    <div className="vhs-input-label">Main Area</div>
+                    <div className="vhs-input-label">Office/Home</div>
                     <div className="group pt-1">
                       <input
                         type="text"

@@ -9,7 +9,7 @@ import Multiselect from "multiselect-react-dropdown";
 function CommunityRights() {
   const location = useLocation();
   const { data } = location.state || {};
-  console.log("data", data);
+
   const [citydata, setcitydata] = useState([]);
   const [filterdata, setfilterdata] = useState([]);
   const [categorydata, setcategorydata] = useState([]);

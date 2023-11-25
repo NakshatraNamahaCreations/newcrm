@@ -11,7 +11,7 @@ function Painting() {
   const [vendorPayments, setVendorPayments] = useState([]);
   const [data, setdata] = useState([]);
   const { id } = useParams();
-  console.log(id);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,7 +25,7 @@ function Painting() {
       setdata(filteredData);
     }
   };
-  console.log("CustomerDetails===", data);
+
   const PaintingURL = () => {
     navigate(`/painting/${id}`);
   };
@@ -46,7 +46,7 @@ function Painting() {
   const getPaymentById = async () => {
     try {
       const customerId = data[0]?.customer[0]?._id;
-      console.log("customerId", customerId);
+     
       let res = await axios.get(
         apiURL + `/getPaymentByCustomerId/${customerId}`
       );
@@ -62,10 +62,10 @@ function Painting() {
   const getWorkById = async () => {
     try {
       const customerId = data[0]?.customer[0]?._id;
-      console.log("customerId", customerId);
+
       let res = await axios.get(apiURL + `/getWorkByCustomerId/${customerId}`);
       if (res.status === 200) {
-        console.log("workDetails", res);
+  
         setWorkDetails(res.data?.works.filter((i)=>i.serviceId ===id));
       }
     } catch (error) {

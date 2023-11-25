@@ -98,9 +98,10 @@ function RunningProject() {
       );
       settreatmentData(filteredData);
       setSearchResults(filteredData);
-  
     }
   };
+
+  console.log("treatment=======", treatmentdata);
 
   // const getservicedata = async () => {
   //   let res = await axios.get(apiURL + "/getrunningdata");
@@ -147,8 +148,6 @@ function RunningProject() {
       alert("Not updated");
     }
   };
-
-
 
   const redirectURL = (data) => {
     console.log(data);
@@ -372,6 +371,21 @@ function RunningProject() {
     const pendingAmount = totalAmount - parseFloat(serviceCharge);
     return pendingAmount.toFixed(2); // Format the pending amount with two decimal places
   }
+
+  function getRowStyle(item) {
+    const isJobComplete = item.dsrdata[0]?.jobComplete === "YES";
+    const isDeepCleaningStart =
+      item.dsrdata[0]?.deepcleaningstartnote === "start";
+
+    if (isJobComplete) {
+      return { backgroundColor: "yellow", color: "black" };
+    } else if (isDeepCleaningStart) {
+      return { backgroundColor: "blue", color: "black" };
+    } else {
+      return { backgroundColor: "white", color: "black" };
+    }
+  }
+
   return (
     <div className="web">
       <Header />
@@ -384,9 +398,9 @@ function RunningProject() {
       <div className="row m-auto" style={{ width: "100%" }}>
         <div className="col-md-12">
           <>
-            <table class="table table-hover table-bordered mt-1">
+            <table  class=" table-bordered mt-1">
               <thead className="">
-                <tr>
+                <tr  className="table-secondary" style={{background:"lightgrey"}}>
                   <th scope="col"></th>
                   <th scope="col">
                     <input
@@ -529,13 +543,20 @@ function RunningProject() {
                       /> */}
                   </th>
                   <th scope="col">
-                    {/* <input type="text" className="vhs-table-input"
-                       onChange={(e) => setContactNo(e.target.value)}
-                      /> */}
+                   
                   </th>
+                  <th scope="col">
+                   
+                   </th>
+                   <th scope="col">
+                   
+                   </th>
+                   <th scope="col">
+                   
+                   </th>
                 </tr>
 
-                <tr className="table-secondary">
+                <tr className="table-secondary" style={{background:"lightgrey"}}>
                   <th className="table-head" scope="col">
                     Sr.No
                   </th>
@@ -600,17 +621,41 @@ function RunningProject() {
                   </th>
 
                   <th scope="col" className="table-head">
+                    Man Power
+                  </th>
+
+                  <th scope="col" className="table-head">
+                    Material
+                  </th>
+
+                  <th scope="col" className="table-head">
+                    Deep Clean Details
+                  </th>
+
+                  <th scope="col" className="table-head">
                     Action
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {searchResults.map((item, index) => (
-                  <tr className="user-tbale-body">
+                  <tr
+                    className=""
+                    key={index}
+                    style={{
+                      backgroundColor:
+                        item.dsrdata[0]?.jobComplete === "YES"
+                          ? "#ffb9798f"
+                          : item.dsrdata[0]?.deepcleaningstart === "start" // Corrected key here
+                          ? "#0080002e"
+                          : "white",
+                      color: "black",
+                    }}
+                  >
                     <td>{index + 1}</td>
                     <td>{item.date}</td>
                     <td>{item.category}</td>
-                    <td>{item.dsrdata[0]?.techName}</td>
+                    <td>{item.dsrdata[0]?.TechorPMorVendorName}</td>
                     <td>{item.quotedata[0]?.salesExecutive}</td>
                     <td>{item.customerData[0]?.customerName}</td>
                     <td>{item.customerData[0]?.mainContact}</td>
@@ -742,7 +787,42 @@ function RunningProject() {
                     </td>
 
                     <td>
-                      <div>RUNNING PROJECTS</div>
+                      <div
+                        
+                      >
+                        {item.dsrdata[0]?.jobComplete === "YES"
+                          ? "CLOSED BY PROJECT MANAGER"
+                          : item.dsrdata[0]?.deepcleaningstart === "start"
+                          ? "BOOK FOR DEEP CLEANING"
+                          : "RUNNING PROJECTS"}
+                      </div>
+                    </td>
+
+                    <td>
+                      {item.manpowerdata.map((item) => (
+                        <>
+                          <div>{item.mandate}</div>
+                          <div> {item.mandesc}</div>
+                        </>
+                      ))}
+                    </td>
+
+                    {/* <td>
+                      <div>{item.materialdata[0]?.materialdate}</div>
+                      <div> {item.materialdata[0]?.materialdesc}</div>
+                    </td> */}
+
+                    <td>
+                      {item.materialdata.map((item) => (
+                        <>
+                          <div>{item.materialdate}</div>
+                          <div> {item.materialdesc}</div>
+                        </>
+                      ))}
+                    </td>
+
+                    <td>
+                      <div>{item.dsrdata[0]?.deepcleaningnote}</div>
                     </td>
 
                     <td>

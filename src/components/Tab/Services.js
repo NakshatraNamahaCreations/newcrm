@@ -40,7 +40,7 @@ function Services() {
     let res = await axios.get(apiURL + "/getcategory");
     if ((res.status = 200)) {
       setCategoryData(res.data?.category);
-      console.log("categoryData=====", res.data?.category);
+
     }
   };
 
@@ -102,7 +102,7 @@ function Services() {
     if (res.status === 200) {
       console.log(res);
       const getVideoLinkData = res.data.service.filter((e) => e.videoLink);
-      console.log("getVideoLinkData", getVideoLinkData);
+   
       setsubcategorydata(getVideoLinkData);
       setfilterdata(getVideoLinkData);
     }
