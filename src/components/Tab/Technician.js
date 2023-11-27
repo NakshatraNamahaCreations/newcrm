@@ -547,8 +547,6 @@ function Technician() {
                     
                       
                     }
-                     
-                      // defaultValue="Select Catagory"
                       selectedValues={selectedCatagory1}
                       onSelect={onEditCatagory}
                       onRemove={onRemoveCatagory}

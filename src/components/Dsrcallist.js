@@ -24,8 +24,7 @@ function Dsrcallist() {
   const [searchDesc, setSearchDesc] = useState("");
   const [vddata, setvddata] = useState([]);
   const [techName, setTechName] = useState([]);
-  const [searchpaymentMode, setsearchpaymentMode] = useState("")
-
+  const [searchpaymentMode, setsearchpaymentMode] = useState("");
 
   useEffect(() => {
     getservicedata();
@@ -171,9 +170,7 @@ function Dsrcallist() {
           results = results.filter(
             (item) =>
               item.desc &&
-              item.desc
-                .toLowerCase()
-                .includes(searchDesc.toLowerCase())
+              item.desc.toLowerCase().includes(searchDesc.toLowerCase())
           );
         }
         if (searchpaymentMode) {
@@ -199,7 +196,7 @@ function Dsrcallist() {
     searchContact,
     searchJobType,
     searchDesc,
-    searchpaymentMode
+    searchpaymentMode,
   ]);
 
   let i = 1;
@@ -260,8 +257,6 @@ function Dsrcallist() {
       return acc;
     }, null);
 
-
-
     return foundCharge !== null ? foundCharge : 0;
   });
 
@@ -289,6 +284,21 @@ function Dsrcallist() {
     }
     return cities;
   }, []);
+
+  const [citydata, setcitydata] = useState([]);
+
+  useEffect(() => {
+    getcity();
+  }, []);
+
+  const getcity = async () => {
+    let res = await axios.get(apiURL+"/master/getcity");
+    if ((res.status = 200)) {
+      setcitydata(res.data?.mastercity);
+     
+    }
+  };
+
 
   return (
     <div className="web">
@@ -343,15 +353,15 @@ function Dsrcallist() {
           >
             <thead className="">
               <tr className="table-secondary">
-                <th className="table-head" scope="col"></th>
+                {/* <th className="table-head" scope="col"></th> */}
                 <th className="table-head" scope="col"></th>
 
                 <th
                   className="table-head"
-                  style={{ width: "13%" }}
+                  style={{ width: "7%" }}
                   scope="col"
                 ></th>
-                <th scope="col" className="table-head">
+                <th scope="col" className="table-head" style={{ width: "7%" }}>
                   <input
                     className="vhs-table-input"
                     value={searchJobCatagory}
@@ -373,11 +383,11 @@ function Dsrcallist() {
                     onChange={(e) => setSearchCity(e.target.value)}
                   >
                     <option value="">Select</option>
-                    {allCities.map((city) => (
-    <option value={city} key={city}>
-      {city}
-    </option>
-  ))}
+                    {citydata.map((city) => (
+                      <option value={city.city} key={city}>
+                        {city.city}
+                      </option>
+                    ))}
                   </select>{" "}
                 </th>
                 <th scope="col" style={{ width: "15%" }} className="table-head">
@@ -411,13 +421,9 @@ function Dsrcallist() {
                     ))}
                   </select>{" "}
                 </th>
-                <th scope="col" className="table-head">
-                  {/* <input
-                    className="vhs-table-input"
-                    value={searchJobType}
-                    onChange={(e) => setSearchJobType(e.target.value)}
-                  />{" "} */}
-                </th>
+                {/* <th scope="col" className="table-head">
+                
+                </th> */}
                 <th scope="col" className="table-head">
                   <input
                     className="vhs-table-input"
@@ -425,30 +431,18 @@ function Dsrcallist() {
                     onChange={(e) => setSearchJobType(e.target.value)}
                   />{" "}
                 </th>
-               
+
                 <th scope="col" className="table-head"></th>
                 <th scope="col" className="table-head">
-
-                <select
+                  <select
                     className="vhs-table-input"
                     value={searchpaymentMode}
                     onChange={(e) => setsearchpaymentMode(e.target.value)}
                   >
                     <option value="">Select</option>
-                   
-                      <option
-                        value="cash"
-                      
-                      >
-                      Cash
-                      </option>
-                      <option
-                        value="online"
-                      
-                      >
-                      Online
-                      </option>
-               
+
+                    <option value="cash">Cash</option>
+                    <option value="online">Online</option>
                   </select>{" "}
                 </th>
                 <th scope="col" className="table-head">
@@ -463,9 +457,9 @@ function Dsrcallist() {
                 <th className="table-head" scope="col">
                   Sr.No
                 </th>
-                <th className="table-head" scope="col">
+                {/* <th className="table-head" scope="col">
                   Category
-                </th>
+                </th> */}
                 <th className="table-head" scope="col">
                   Date
                 </th>
@@ -495,9 +489,9 @@ function Dsrcallist() {
                   </th>
                 )}
 
-                <th scope="col" className="table-head">
+                {/* <th scope="col" className="table-head">
                   Worker Name
-                </th>
+                </th> */}
                 <th scope="col" className="table-head">
                   Job Type
                 </th>
@@ -548,7 +542,7 @@ function Dsrcallist() {
                     }}
                   >
                     <td>{i++}</td>
-                    <td>{selectedData.category}</td>
+                    {/* <td>{selectedData.category}</td> */}
                     <td>{date}</td>
                     <td>{selectedData.selectedSlotText}</td>
 
@@ -619,7 +613,7 @@ function Dsrcallist() {
                       )}
                     </td>
 
-                    <td>{dsrdata[0]?.workerName}</td>
+                    {/* <td>{dsrdata[0]?.workerName}</td> */}
 
                     <td>{selectedData.service}</td>
 

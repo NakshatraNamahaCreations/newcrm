@@ -111,7 +111,7 @@ function Community() {
     getComnnuityById();
   }, []);
 
-  console.log("communitydata", communitydata);
+
   const deletecommunity = async (id) => {
     axios({
       method: "post",

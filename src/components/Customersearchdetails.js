@@ -59,23 +59,48 @@ function Customersearchdetails() {
   const [selectedAddress, setSelectedAddress] = useState("");
   const [category, setcategory] = useState(editenable.category);
 
-  console.log("selectedAddress",selectedAddress)
-
+const [Caddres, setCaddres] = useState()
   const handleCategoryChange = (e) => {
     setcategory(e.target.value);
   };
 
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
+    setCaddres("")
   };
 
   const handleRowClick = (address) => {
     setSelectedAddress(address);
+    setCaddres("")
+  };
+
+  const handleRowClick1 = (item) => {
+    setSelectedAddress({
+      address: item.lnf,
+      landmark: item.cnap,
+      platNo: item.rbhf,
+      userId: customerdata[0]._id,
+    });
+    console.log(
+      "selectedAddress11",
+      item.lnf,
+      item.cnap,
+      item.rbhf,
+      customerdata[0]._id
+    );
   };
 
 
+  const handleAddressSelect1 = (item) => {
  
-
+setCaddres(item)
+    setSelectedAddress({
+      address: item.lnf,
+      landmark: item.cnap,
+      platNo: item.rbhf,
+      userId: customerdata[0]._id,
+    });
+  };
 
   useEffect(() => {
     const getcustomer = async () => {
@@ -293,7 +318,7 @@ function Customersearchdetails() {
     }
   };
 
-  const selecttheaddress = (event) => {
+  const selecttheaddress = async(event) => {
     event.preventDefault();
     if (selectedAddress) {
       addtreatmentdetails();
@@ -361,7 +386,7 @@ function Customersearchdetails() {
         if (whatsappdata.length > 0) {
           // Assuming you want the first item from whatsappdata for the API call
           const selectedResponse = whatsappdata[0];
-          makeApiCall(selectedResponse, customerdata[0]?.mainContact);
+          // makeApiCall(selectedResponse, customerdata[0]?.mainContact);
 
           await axios(config).then(function (response) {
             if (response.status === 200) {
@@ -407,11 +432,9 @@ function Customersearchdetails() {
         data: {
           customerData: customerdata[0],
 
- 
-
           userId: customerdata[0]._id,
           category: category,
-    
+
           service: treatment,
           GrandTotal: serviceCharge,
           serviceID: serviceId,
@@ -419,10 +442,7 @@ function Customersearchdetails() {
           selectedSlotText: selectedSlot,
           serviceCharge: serviceCharge,
 
-
           desc: desc,
-
-  
 
           communityId: oneCommunity._id, //this line
           oneCommunity: communityPercentage, //thi line
@@ -1114,46 +1134,46 @@ function Customersearchdetails() {
                       </>
                     ) : (
                       <>
-                      <div className="row mt-2">
-                        <div className="col-md-4 pt-3">
-                          <div className="vhs-input-label">
-                            Service Charge{" "}
-                            <span className="text-danger">*</span>
+                        <div className="row mt-2">
+                          <div className="col-md-4 pt-3">
+                            <div className="vhs-input-label">
+                              Service Charge{" "}
+                              <span className="text-danger">*</span>
+                            </div>
+                            <input
+                              type="number"
+                              name="qty"
+                              className="col-md-12 vhs-input-value"
+                              onChange={(e) => setserviceCharge(e.target.value)}
+                              defaultValue={editenable.serviceCharge}
+                            />
                           </div>
-                          <input
-                            type="number"
-                            name="qty"
-                            className="col-md-12 vhs-input-value"
-                            onChange={(e) => setserviceCharge(e.target.value)}
-                            defaultValue={editenable.serviceCharge}
-                          />
-                        </div>
-                        <div className="col-md-4 pt-3">
-                          <div className="vhs-input-label">
-                            Date of Service
+                          <div className="col-md-4 pt-3">
+                            <div className="vhs-input-label">
+                              Date of Service
+                            </div>
+                            <input
+                              type="date"
+                              name="qty"
+                              className="col-md-12 vhs-input-value"
+                              onChange={(e) => setdateofService(e.target.value)}
+                              defaultValue={editenable.dateofService}
+                            />
                           </div>
-                          <input
-                            type="date"
-                            name="qty"
-                            className="col-md-12 vhs-input-value"
-                            onChange={(e) => setdateofService(e.target.value)}
-                            defaultValue={editenable.dateofService}
-                          />
+                          <div className="col-md-4 pt-3">
+                            <div className="vhs-input-label">Description</div>
+                            <textarea
+                              type="text"
+                              name="desc"
+                              className="col-md-12 vhs-input-value"
+                              onChange={(e) => setdesc(e.target.value)}
+                              rows={5}
+                              cols={10}
+                              defaultValue={editenable.desc}
+                            />
+                          </div>
                         </div>
-                        <div className="col-md-4 pt-3">
-                          <div className="vhs-input-label">Description</div>
-                          <textarea
-                            type="text"
-                            name="desc"
-                            className="col-md-12 vhs-input-value"
-                            onChange={(e) => setdesc(e.target.value)}
-                            rows={5}
-                            cols={10}
-                            defaultValue={editenable.desc}
-                          />
-                        </div>
-                      </div>
-                    </>
+                      </>
                     )}
 
                     <div className="col-md-4 mt-2">
@@ -1538,6 +1558,7 @@ function Customersearchdetails() {
         show={show1}
         onHide={handleClose1}
         size="lg"
+        backdrop="static"
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
@@ -1548,31 +1569,32 @@ function Customersearchdetails() {
         </Modal.Header>
         <Modal.Body>
           <div className="row px-3">
-{customerdata.map((item,index)=>(
-  
-
-          <div key={index}>
-                  <div
-                    className="col-md-12 d-flex"
-                    onClick={() => handleRowClick(item)}
-                  >
-                    <div className="mt-2">
-                      <input
-                        type="radio"
-                        checked={selectedAddress === item}
-                        onChange={() => handleAddressSelect(item)}
-                        style={{ width: 40, fontSize: "20px", height: "20px" }}
-                      />
-                    </div>
-                    <div className="d-flex">
-                      {`${item.rbhf}, ${item.cnap}, ${item.lnf}`}
-                    </div>
-                  
+            {customerdata[0]?.lnf ?
+            customerdata.map((item, index) => (
+              <div key={index}>
+                <div
+                  className="col-md-12 d-flex"
+                  onClick={() => handleRowClick1(item)}
+                >
+                  <div className="mt-2">
+                    <input
+                      type="radio"
+                      checked={selectedAddress ? selectedAddress ===item :Caddres === item}
+                      onChange={() => handleAddressSelect1(item)}
+                      style={{ width: 40, fontSize: "20px", height: "20px" }}
+                    />
+                  </div>
+                  <div className="d-flex">
+                    {`${item.rbhf}, ${item.cnap}, ${item.lnf}`}
                   </div>
                 </div>
-                ))}
-            {customerAddressdata.length > 0 ? (
-              customerAddressdata.map((address, index) => (
+              </div>
+            )):
+            <></>
+            }
+          
+         
+            {  customerAddressdata.map((address, index) => (
                 <div key={index}>
                   <div
                     className="col-md-12 d-flex"
@@ -1601,20 +1623,20 @@ function Customersearchdetails() {
                     </a>
                   </div>
                 </div>
-              ))
-            ) : (
+              ))}
+         
               <div>
-                <p>No data found ?</p>
+                
                 <Button onClick={handleShow}>Add Address</Button>
               </div>
-            )}
+       
           </div>
         </Modal.Body>
         <Modal.Footer>
-          {customerAddressdata.length > 0 ? (
-            <Button onClick={addtreatmentdetails}>Next</Button>
+          {selectedAddress ? (
+            <Button onClick={addtreatmentdetails}>Continue</Button>
           ) : (
-            <></>
+            <>Select the address</>
           )}
         </Modal.Footer>
       </Modal>
