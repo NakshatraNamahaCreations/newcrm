@@ -22,7 +22,7 @@ function Dsrdetails() {
   const { data, data1, TTname } = location.state || {};
   const id = data?._id;
   const [dsrdata, setdsrdata] = useState([]);
-
+  const [newcity, setnewcity] = useState(data?.city);
   const [techniciandata, settechniciandata] = useState([]);
   const [PMdata, setPMdata] = useState([]);
   const [vddata, setvddata] = useState([]);
@@ -94,7 +94,7 @@ function Dsrdetails() {
   useEffect(() => {
     gettechnician();
     getaddcall();
-    getAlldata();
+
     getServiceManagement();
   }, []);
 
@@ -132,6 +132,24 @@ function Dsrdetails() {
     getnameof();
   }, [dsrdata]);
 
+  const [slotesdata, setslotesdata] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState(
+    data?.selectedSlotText || ""
+  );
+
+  useEffect(() => {
+    getslots();
+  }, []);
+
+  const getslots = async () => {
+    let res = await axios.get(
+      "https://api.vijayhomeservicebengaluru.in/api/userapp/getslots"
+    );
+    if ((res.status = 200)) {
+      setslotesdata(res.data?.slots);
+    }
+  };
+
   const getnameof = async () => {
     let res = await axios.get(apiURL + "/getalltechnician");
     if ((res.status = 200)) {
@@ -165,6 +183,7 @@ function Dsrdetails() {
     setSelectedTechId(event.target.value); // Set the selected ID
     setSelectedTechName(selectedTech ? selectedTech.vhsname : ""); // Set the selected name
   };
+
   const checking = () => {
     if (jobComplete === "CANCEL") {
       setShow(true);
@@ -174,60 +193,57 @@ function Dsrdetails() {
   };
 
   const newdata = async (e) => {
-  
+    try {
+      const config = {
+        url: "/adddsrcall",
+        method: "post",
+        baseURL: apiURL,
+        // data: formdata,
+        headers: { "content-type": "application/json" },
+        data: {
+          serviceDate: data1,
+          serviceInfo: data,
+          serviceId: data?._id,
+          cardNo: data.cardNo,
+          category: data.category,
+          bookingDate: moment().format("DD-MM-YYYY"),
+          priorityLevel: priorityLevel,
+          appoDate: data1,
+          appoTime: appoTime,
+          customerFeedback: customerFeedback,
+          techComment: techComment,
+          workerName: workerName,
+          workerAmount: workerAmount,
+          daytoComplete: daytoComplete,
+          backofficerno: admin.contactno,
+          techName: techName,
+          TechorPMorVendorID: selectedTechId,
+          TechorPMorVendorName: selectedTechName,
+          showinApp: Showinapp,
+          sendSms: sendSms,
+          jobType: jobType,
+          type: type,
+          jobComplete: jobComplete,
+          amount: data.serviceCharge,
+          cancelOfficerName: admin.displayname,
+          cancelOfferNumber: admin.contactno,
+          reason: Reason,
+          techName: techName,
+          cancelDate: moment().format("MMMM Do YYYY, h:mm:ss a"),
+        },
+      };
+      await axios(config).then(function (response) {
+        if (response.status === 200) {
+          console.log("success");
+          alert(" Added");
 
-      try {
-        const config = {
-          url: "/adddsrcall",
-          method: "post",
-          baseURL: apiURL,
-          // data: formdata,
-          headers: { "content-type": "application/json" },
-          data: {
-            serviceDate: data1,
-            serviceInfo: data,
-            serviceId: data?._id,
-            cardNo: data.cardNo,
-            category: data.category,
-            bookingDate: moment().format("DD-MM-YYYY"),
-            priorityLevel: priorityLevel,
-            appoDate: data1,
-            appoTime: appoTime,
-            customerFeedback: customerFeedback,
-            techComment: techComment,
-            workerName: workerName,
-            workerAmount: workerAmount,
-            daytoComplete: daytoComplete,
-            backofficerno: admin.contactno,
-            techName: techName,
-            TechorPMorVendorID: selectedTechId,
-            TechorPMorVendorName: selectedTechName,
-            showinApp: Showinapp,
-            sendSms: sendSms,
-            jobType: jobType,
-            type: type,
-            jobComplete: jobComplete,
-            amount: data.serviceCharge,
-            cancelOfficerName: admin.displayname,
-            cancelOfferNumber: admin.contactno,
-            reason: Reason,
-            techName: techName,
-            cancelDate: moment().format("MMMM Do YYYY, h:mm:ss a"),
-          },
-        };
-        await axios(config).then(function (response) {
-          if (response.status === 200) {
-            console.log("success");
-            alert(" Added");
-
-            window.location.assign("/dsrcategory");
-          }
-        });
-      } catch (error) {
-        console.error(error);
-        alert(" Not Added");
-      }
-    
+          window.location.assign(`/dsrcallist/${data1}/${data.category}`);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      alert(" Not Added");
+    }
   };
 
   // 16-9
@@ -262,7 +278,7 @@ function Dsrdetails() {
           workerAmount: workerAmount,
           workerName: workerName,
           daytoComplete: daytoComplete,
-          TechorPMorVendorID: selectedTechId,
+          TechorPMorVendorID: dsrdata[0]?.selectedTechId,
           TechorPMorVendorName: selectedTechName,
           cancelOfficerName: admin.displayname,
           cancelOfferNumber: admin.contactno,
@@ -275,7 +291,7 @@ function Dsrdetails() {
         if (response.status === 200) {
           setShow(false);
 
-          window.location.assign("/dsrcategory");
+          window.location.assign(`/dsrcallist/${data1}/${data.category}`);
         }
       });
     } catch (error) {
@@ -325,20 +341,17 @@ function Dsrdetails() {
     }
   });
 
+  useEffect(() => {
+    getAlldata();
+  }, [data]);
+
   const getAlldata = async () => {
-    let res = await axios.get(apiURL + "/getaggredsrdata");
+    let res = await axios.get(apiURL + "/getalldsrlist");
     if (res.status === 200) {
       setdsrdata(
         res.data.addcall.filter(
-          (i) =>
-            i.serviceDate === data1 &&
-            i.cardNo == data.cardNo &&
-            i.serviceInfo[0]?._id === data?._id
+          (i) => i.serviceDate === data1 && i.serviceId === data?._id
         )
-      );
-
-      setcomplaintRefo(
-        res.data?.addcall.filter((i) => i.cardNo === data.cardNo)
       );
     }
   };
@@ -531,9 +544,9 @@ function Dsrdetails() {
             resDate: moment().format("MMMM Do YYYY, h:mm:ss a"),
           },
         };
-  
+
         const response = await axios(config);
-  
+
         if (response.status === 200) {
           setShow1(false);
           alert("Updated");
@@ -544,7 +557,6 @@ function Dsrdetails() {
         }
       } catch (error) {
         if (error.response) {
-       
           alert(`Server error: ${error.response.data.message}`);
         } else if (error.request) {
           // The request was made but no response was received
@@ -558,7 +570,44 @@ function Dsrdetails() {
       }
     }
   };
-  
+  const [citydata, setcitydata] = useState([]);
+
+  useEffect(() => {
+    getcity();
+  }, []);
+
+  const getcity = async () => {
+    let res = await axios.get(apiURL + "/master/getcity");
+    if ((res.status = 200)) {
+      setcitydata(res.data?.mastercity);
+    }
+  };
+
+  const editservicedetails = async (e) => {
+    e.preventDefault();
+    try {
+      const config = {
+        url: `/changeappotime/${data._id}`,
+        method: "post",
+        baseURL: apiURL,
+        headers: { "content-type": "application/json" },
+        data: {
+          selectedSlotText: selectedSlot,
+
+          city: newcity,
+        },
+      };
+      await axios(config).then(function (response) {
+        if (response.status === 200) {
+          alert("Successfully Added");
+          window.location.reload("");
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      alert("something went wrong");
+    }
+  };
 
   return (
     <div className="web">
@@ -620,7 +669,7 @@ function Dsrdetails() {
                 <div className="col-md-4">
                   <div className="vhs-input-label">Appointment Time</div>
                   <div className="group pt-1">
-                    <select
+                    {/* <select
                       className="col-md-12 vhs-input-value"
                       onChange={(e) => setappoTime(e.target.value)}
                       defaultValue={data.selectedSlotText}
@@ -631,50 +680,104 @@ function Dsrdetails() {
                           {`${slot.startTime} `}
                         </option>
                       ))}
+                    </select> */}
+
+                    <select
+                      className="col-md-12 vhs-input-value"
+                      onChange={(e) => {
+                        setSelectedSlot(e.target.value);
+
+                        const selectedSlotData = slotesdata.filter(
+                          (slot) => slot.startTime === e.target.value
+                        );
+                      }}
+                      value={selectedSlot}
+                    >
+                      {filteredSlots && filteredSlots.length > 0 ? (
+                        <>
+                          <option value={data?.selectedSlotText}>
+                            {data?.selectedSlotText}
+                          </option>
+                          {filteredSlots?.map((slot, index) => (
+                            <option key={index} value={`${slot.startTime}`}>
+                              {`${slot.startTime} `}
+                            </option>
+                          ))}
+                        </>
+                      ) : (
+                        slotesdata?.map((slot, index) => (
+                          <option key={index} value={`${slot.startTime}`}>
+                            {`${slot.startTime} `}
+                          </option>
+                        ))
+                      )}
                     </select>
 
-                    {/* <input
-                      type="time"
+                    <p>Time Given</p>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="vhs-input-label">City</div>
+                  <div className="group pt-1">
+                    <select
                       className="col-md-12 vhs-input-value"
-                      defaultValue={dsrdata[0]?.appoTime}
-                      onChange={(e) => setappoTime(e.target.value)}
-                    /> */}
+                      onChange={(e) => setnewcity(e.target.value)}
+                      defaultValue={data.city}
+                    >
+                      <option>{data.city}</option>
+                      {citydata?.map((data, index) => (
+                        <option key={index} value={data.city}>
+                          {data.city}
+                        </option>
+                      ))}
+                    </select>
+
                     <p>Time Given</p>
                   </div>
                 </div>
               </div>
-              {dsrdata[0]?.jobComplete === "NO" ||
-              dsrdata[0]?.jobComplete === undefined ||
-              dsrdata[0]?.jobComplete === null ? (
-                <>
-                  <button onClick={() => setShow1(true)}>
-                    Reschedule date
-                  </button>
-                  {data?.reason ? (
-                    <div>
-                      <p style={{ color: "orange" }}>
-                        Rescheduled this services
-                      </p>
-                      <div style={{ fontWeight: "bold" }}>OPM Details</div>
-                      <p style={{ marginBottom: 0 }}>{data.ResheduleUser}</p>
-                      <p style={{ marginBottom: 0 }}>
-                        {data.ResheduleUsernumber}
-                      </p>
-                      <p style={{ marginBottom: 0 }}>{data.reason}</p>
-                      <p>{data.resDate}</p>
-                    </div>
+              <div className="row pt-3">
+                <div className="col-md-4">
+                  {dsrdata[0]?.jobComplete === "NO" ||
+                  dsrdata[0]?.jobComplete === undefined ||
+                  dsrdata[0]?.jobComplete === null ? (
+                    <>
+                      <button onClick={() => setShow1(true)}>
+                        Reschedule date
+                      </button>
+                      {data?.reason ? (
+                        <div>
+                          <p style={{ color: "orange" }}>
+                            Rescheduled this services
+                          </p>
+                          <div style={{ fontWeight: "bold" }}>OPM Details</div>
+                          <p style={{ marginBottom: 0 }}>
+                            {data.ResheduleUser}
+                          </p>
+                          <p style={{ marginBottom: 0 }}>
+                            {data.ResheduleUsernumber}
+                          </p>
+                          <p style={{ marginBottom: 0 }}>{data.reason}</p>
+                          <p>{data.resDate}</p>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
+                    </>
                   ) : (
                     <></>
                   )}
-                </>
-              ) : (
-                <></>
-              )}
-
-              <h5>Customer Information</h5>
+                </div>
+                <div className="col-md-4">
+                <button onClick={editservicedetails} style={{width:"150px"}}>
+                   Update App/city
+                      </button>
+                  </div>
+              </div>
+              <h5 className="mt-3">Customer Information</h5>
               <hr />
 
-              <div className="row pt-3">
+              <div className="row pt-3 ">
                 <div className="col-md-4">
                   <div className="vhs-input-label">Customer Name</div>
                   <div className="group pt-1">
@@ -686,7 +789,9 @@ function Dsrdetails() {
                 <div className="col-md-4">
                   <div className="vhs-input-label">Card No</div>
                   <div className="group pt-1">
-                    <div className="vhs-non-editable">{data.customerData[0]?.cardNo}</div>
+                    <div className="vhs-non-editable">
+                      {data.customerData[0]?.cardNo}
+                    </div>
                   </div>
                 </div>
                 <div className="col-md-4">
@@ -716,7 +821,7 @@ function Dsrdetails() {
                   <div className="vhs-input-label"> Contact 2</div>
                   <div className="group pt-1">
                     <div className="vhs-non-editable">
-                      {data.customer[0]?.alternateContact}
+                      {data.customerData[0]?.alternateContact}
                     </div>
                   </div>
                 </div>
@@ -730,8 +835,9 @@ function Dsrdetails() {
                       {data.deliveryAddress === null ||
                       data.deliveryAddress === undefined ? (
                         <>
-                          {data.customer[0]?.cnap},{data.customer[0]?.rbhf},
-                          {data.customer[0]?.lnf}
+                          {data.customerData[0]?.cnap},
+                          {data.customerData[0]?.rbhf},
+                          {data.customerData[0]?.lnf}
                         </>
                       ) : (
                         <>
@@ -771,8 +877,8 @@ function Dsrdetails() {
                   <div className="vhs-input-label">Customer Type</div>
                   <div className="group pt-1">
                     <div className="vhs-non-editable">
-                      {data.customer[0]?.customerType
-                        ? data.customer[0]?.customerType
+                      {data.customerData[0]?.customerType
+                        ? data.customerData[0]?.customerType
                         : data?.type}
                     </div>
                   </div>
@@ -1294,11 +1400,11 @@ function Dsrdetails() {
               Close
             </button>
             {!dsrdata[0] ? (
-              <button className="vhs-button" onClick={Reason?newdata:""}>
-                Cancel12
+              <button className="vhs-button" onClick={Reason ? newdata : ""}>
+                Cancel
               </button>
             ) : (
-              <button className="vhs-button" onClick={Reason?Update:""}>
+              <button className="vhs-button" onClick={Reason ? Update : ""}>
                 Cancel
               </button>
             )}

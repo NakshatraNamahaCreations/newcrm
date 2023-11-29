@@ -357,7 +357,7 @@ setCaddres(item)
             dividedDates: dividedDates,
             dividedamtDates: dividedamtDates,
             dividedamtCharges: dividedamtCharges,
-            dCategory: customerdata[0].category,
+            dCategory: category,
             userId: customerdata[0]._id,
             category: category,
             contractType: contractType,
@@ -366,6 +366,7 @@ setCaddres(item)
             serviceID: serviceId,
             slots: selectedSlot,
             selectedSlotText: selectedSlot,
+            
             serviceCharge: serviceCharge,
             dateofService: dateofService,
             deliveryAddress: selectedAddress,

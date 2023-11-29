@@ -80,11 +80,11 @@ function Dsrcallist() {
       if (res.status === 200) {
         const filteredData = res.data.addcall.filter((i) => {
           const dateMatches = i.serviceDate === date;
-          const cardNoMatches = treatmentData.some((treatmentItem) => {
-            return treatmentItem.cardNo === i.cardNo;
-          });
+          // const cardNoMatches = treatmentData.some((treatmentItem) => {
+          //   return treatmentItem.cardNo === i.cardNo;
+          // });
 
-          return dateMatches && cardNoMatches;
+          return dateMatches;
         });
         setdsrdata1(res.data.addcall);
         setdsrdata(filteredData);
@@ -95,6 +95,8 @@ function Dsrcallist() {
       console.error("Error fetching data:", error);
     }
   };
+
+
 
   useEffect(() => {
     async function filterResults() {
@@ -141,15 +143,19 @@ function Dsrcallist() {
           );
         }
         if (searchContact) {
-          results = results.filter((item) =>
-            item.customerData[0]?.mainContact &&
-            typeof item.customerData[0]?.mainContact === "string"
-              ? item.mainContact
-                  .toLowerCase()
-                  .includes(searchContact.toLowerCase())
-              : ""
-          );
+          results = results.filter((item) => {
+            const mainContact = item.customerData[0]?.mainContact;
+            if (typeof mainContact === "string") {
+              return mainContact.toLowerCase().includes(searchContact.toLowerCase());
+            } else if (typeof mainContact === "number") {
+              const stringMainContact = String(mainContact); // Convert number to string
+              return stringMainContact.toLowerCase().includes(searchContact.toLowerCase());
+            }
+            return false; // Exclude if mainContact is neither string nor number
+          });
         }
+        
+        
         if (searchTechName) {
           results = results.filter(
             (item) =>
@@ -197,6 +203,7 @@ function Dsrcallist() {
     searchJobType,
     searchDesc,
     searchpaymentMode,
+    searchTechName
   ]);
 
   let i = 1;
@@ -237,8 +244,7 @@ function Dsrcallist() {
 
   const SERVICECANCLE = (service) => {
     const filterStartTime = dsrdata1.filter(
-      (item) =>
-        item.serviceInfo[0]?._id === service._id && item.serviceDate == date
+      (item) => item.serviceInfo[0]?._id === service._id
     );
 
     return filterStartTime[0]?.jobComplete;
@@ -278,7 +284,7 @@ function Dsrcallist() {
     return matchingData[0]?.charge;
   };
   const allCities = treatmentData.reduce((cities, e) => {
-    const city = e.customer[0]?.city;
+    const city = e.customerData[0]?.city;
     if (city && !cities.includes(city)) {
       cities.push(city);
     }
@@ -292,13 +298,13 @@ function Dsrcallist() {
   }, []);
 
   const getcity = async () => {
-    let res = await axios.get(apiURL+"/master/getcity");
+    let res = await axios.get(apiURL + "/master/getcity");
     if ((res.status = 200)) {
       setcitydata(res.data?.mastercity);
-     
     }
   };
 
+console.log("treatment",treatmentData)
 
   return (
     <div className="web">
@@ -383,11 +389,13 @@ function Dsrcallist() {
                     onChange={(e) => setSearchCity(e.target.value)}
                   >
                     <option value="">Select</option>
-                    {citydata.map((city) => (
-                      <option value={city.city} key={city}>
-                        {city.city}
-                      </option>
-                    ))}
+                    {[...new Set(treatmentData.map((city) => city.city))].map(
+                      (uniqueCity) => (
+                        <option value={uniqueCity} key={uniqueCity}>
+                          {uniqueCity}
+                        </option>
+                      )
+                    )}
                   </select>{" "}
                 </th>
                 <th scope="col" style={{ width: "15%" }} className="table-head">
@@ -405,7 +413,7 @@ function Dsrcallist() {
                   />{" "}
                 </th>
                 <th scope="col" className="table-head">
-                  <select
+                  {/* <select
                     className="vhs-table-input" //no Technician name
                     value={searchTechName}
                     onChange={(e) => setSearchTechName(e.target.value)}
@@ -419,7 +427,24 @@ function Dsrcallist() {
                         {e.TechorPMorVendorName}{" "}
                       </option>
                     ))}
-                  </select>{" "}
+                  </select>{" "} */}
+
+                  <select
+                    className="vhs-table-input"
+                    value={searchTechName}
+                    onChange={(e) => setSearchTechName(e.target.value)}
+                  >
+                    <option value="">Select</option>
+                    {[
+                      ...new Set(
+                        treatmentData.map((item) => item.dsrdata[0]?.TechorPMorVendorName)
+                      ),
+                    ].map((uniqueName) => (
+                      <option value={uniqueName} key={uniqueName}>
+                        {uniqueName}
+                      </option>
+                    ))}
+                  </select>
                 </th>
                 {/* <th scope="col" className="table-head">
                 
@@ -523,12 +548,12 @@ function Dsrcallist() {
                         ? "rgb(182, 96, 255)"
                         : SERVICECOMPLETED(selectedData)
                         ? "#4caf50"
+                        : SERVICECANCLE(selectedData) === "CANCEL"
+                        ? "#f44336"
                         : SERVICESTARTED(selectedData)
                         ? "#ffeb3b"
                         : passfunction(selectedData)
                         ? "#e2e3e5"
-                        : SERVICECANCLE(selectedData) === "CANCEL"
-                        ? "#f44336"
                         : "",
                   }}
                 >
@@ -548,11 +573,11 @@ function Dsrcallist() {
 
                     <td>{selectedData.customerData[0]?.customerName}</td>
 
-                    {selectedData.city ? (
+                    {/* {selectedData.city ? (
                       <td>{selectedData.city}</td>
-                    ) : (
+                    ) : ( */}
                       <td>{selectedData.customerData[0]?.city}</td>
-                    )}
+                    {/* )} */}
                     <td>
                       {selectedData?.deliveryAddress
                         ? `
@@ -568,10 +593,14 @@ function Dsrcallist() {
                     <td>{selectedData.customerData[0]?.mainContact}</td>
 
                     <td>
-                      {/* {TTname} */}
-                      {passfunction(selectedData)}
+                      {selectedData.dsrdata &&
+                        selectedData.dsrdata.length > 0 && (
+                          <p>{selectedData.dsrdata[0]?.TechorPMorVendorName}</p>
+                        )}
 
-                      {selectedData?.dsrdata[0]?.Tcanceldate ? (
+                      {/* {passfunction(selectedData)} */}
+
+                      {selectedData?.dsrdata[0]?.Tcanceldate && (
                         <>
                           <p
                             style={{
@@ -587,10 +616,9 @@ function Dsrcallist() {
                             {selectedData?.dsrdata[0]?.Tcancelreason}
                           </p>
                         </>
-                      ) : (
-                        <></>
                       )}
-                      {selectedData?.dsrdata[0]?.rescheduledate ? (
+
+                      {selectedData?.dsrdata[0]?.rescheduledate && (
                         <>
                           <p
                             style={{
@@ -608,8 +636,6 @@ function Dsrcallist() {
                             {selectedData?.dsrdata[0]?.rescheduletime}
                           </p>
                         </>
-                      ) : (
-                        <></>
                       )}
                     </td>
 
@@ -626,7 +652,10 @@ function Dsrcallist() {
                           : "0"}
                       </td>
                     )}
-                    <td>{selectedData.paymentMode}</td>
+                    <td>
+                      {SERVICECANCLE(selectedData)}
+                      {selectedData.paymentMode}
+                    </td>
                     <td>{selectedData.desc}</td>
                   </Link>
                 </tr>

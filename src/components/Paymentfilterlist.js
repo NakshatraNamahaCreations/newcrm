@@ -31,7 +31,7 @@ function Paymentfilterlist() {
   useEffect(() => {}, [treatmentData]);
 
   const getservicedata = async () => {
-    let res = await axios.get(apiURL + "/getrunningdata");
+    let res = await axios.get(apiURL + "/getdsrdata");
     if (res.status === 200) {
       const data = res.data?.runningdata;
 
@@ -80,8 +80,8 @@ function Paymentfilterlist() {
       if (searchCustomerName) {
         results = results.filter(
           (item) =>
-            item.customer[0]?.customerName &&
-            item.customer[0]?.customerName
+            item.customerData[0]?.customerName &&
+            item.customerData[0]?.customerName
               .toLowerCase()
               .includes(searchCustomerName.toLowerCase())
         );
@@ -89,8 +89,8 @@ function Paymentfilterlist() {
       if (searchCity) {
         results = results.filter(
           (item) =>
-            item.customer[0]?.city &&
-            item.customer[0]?.city
+            item.customerData[0]?.city &&
+            item.customerData[0]?.city
               .toLowerCase()
               .includes(searchCity.toLowerCase())
         );
@@ -98,12 +98,12 @@ function Paymentfilterlist() {
       if (searchAddress) {
         results = results.filter(
           (item) =>
-            (item.customer[0]?.cnap &&
-              item.customer[0]?.cnap
+            (item.customerData[0]?.cnap &&
+              item.customerData[0]?.cnap
                 .toLowerCase()
                 .includes(searchAddress.toLowerCase())) ||
-            (item.customer[0]?.rbhf &&
-              item.customer[0]?.rbhf
+            (item.customerData[0]?.rbhf &&
+              item.customerData[0]?.rbhf
                 .toLowerCase()
                 .includes(searchAddress.toLowerCase()))
         );
@@ -231,7 +231,7 @@ function Paymentfilterlist() {
         <div className="col-md-12">
           <table style={{ width: "113%" }} class=" table-bordered mt-1">
             <thead className="">
-              <tr className="table-secondary">
+              <tr className="table-secondary" style={{background:"lightgrey"}}>
                 <th className="table-head" scope="col"></th>
 
                 <th
@@ -257,10 +257,10 @@ function Paymentfilterlist() {
                     <option value="">Select</option>
                     {treatmentData.map((e) => (
                       <option
-                        value={e.customer[0]?.city}
-                        key={e.customer[0]?.city}
+                        value={e.customerData[0]?.city}
+                        key={e.customerData[0]?.city}
                       >
-                        {e.customer[0]?.city}{" "}
+                        {e.customerData[0]?.city}{" "}
                       </option>
                     ))}
                   </select>{" "}
@@ -298,12 +298,13 @@ function Paymentfilterlist() {
                 <th className="table-head" scope="col"></th>
                 <th className="table-head" scope="col"></th>
                 <th className="table-head" scope="col"></th>
+                <th className="table-head" scope="col"></th>
 
                 {/* 
                 // <th scope="col" className="table-head"></th>
                 <th scope="col" className="table-head"></th> */}
               </tr>
-              <tr className="table-secondary">
+              <tr className="table-secondary" style={{background:"lightgrey"}}> 
                 <th className="table-head" scope="col">
                   Sr.No
                 </th>
@@ -366,7 +367,11 @@ function Paymentfilterlist() {
                   className="user-tbale-body"
                   style={{
                     backgroundColor:
-                      selectedData?.status === "confirm" ? "orange" : "white",
+                      selectedData?.status === "confirm"
+                        ? "orange"
+                        : selectedData.dsrdata[0]?.jobComplete === "CANCEL"
+                        ? "rgb(186, 88, 88)"
+                        : "white",
                   }}
                 >
                   <td>{i++}</td>
@@ -390,9 +395,9 @@ function Paymentfilterlist() {
                     </td>
                   ) : (
                     <td>
-                      {selectedData.customer[0]?.rbhf},
-                      {selectedData.customer[0]?.cnap},
-                      {selectedData.customer[0]?.lnf}
+                      {selectedData.customerData[0]?.rbhf},
+                      {selectedData.customerData[0]?.cnap},
+                      {selectedData.customerData[0]?.lnf}
                     </td>
                   )}
                   <td>{selectedData.customerData[0]?.mainContact}</td>
@@ -547,71 +552,50 @@ function Paymentfilterlist() {
                     )}
                   </td>
                   <td>
-                    {selectedData?.status === "confirm" ? (
-                      <Link
-                        to="/raiseinvoice"
-                        state={{ data: selectedData, data1: date }}
-                      >
-                        <p style={{ color: "red" }}> Raise Invoice</p>
-                      </Link>
+                    {selectedData.dsrdata[0]?.jobComplete === "CANCEL" ? (
+                      "   "
                     ) : (
                       <>
-                        <Link
-                          to="/paymentfulldetails"
-                          className="tbl"
-                          state={{ data: selectedData, data1: date }}
-                        >
-                          {" "}
-                          <p style={{ color: "green" }}>Payment collect</p>
-                        </Link>
-
-                        <Link
-                          to="/raiseinvoice"
-                          state={{ data: selectedData, data1: date }}
-                        >
-                          <p style={{ color: "red" }}> Raise Invoice</p>
-                        </Link>
-                        <b></b>
-                        {/* {selectedData?.paymentMode === "Online" ? (
-                          <td>
-                            {" "}
-                            <a onClick={() => confirm(selectedData?._id)}>
-                              <p style={{ color: "orange" }}>Confirm</p>
-                            </a>
-                          </td>
+                        {selectedData?.status === "confirm" ? (
+                          <Link
+                            to="/raiseinvoice"
+                            state={{ data: selectedData, data1: date }}
+                          >
+                            <p style={{ color: "red" }}> Raise Invoice</p>
+                          </Link>
                         ) : (
-                          <td>
-                            <b>
-                              {calculatePendingPaymentAmount(
-                                selectedData.paymentData.filter(
-                                  (i) =>
-                                    i.paymentType === "Customer" &&
-                                    i.serviceId === selectedData._id &&
-                                    i.serviceDate === date
-                                ),
-                                selectedData.dividedamtCharges
-                              ) == 0 ? (
-                                <a onClick={() => confirm(selectedData?._id)}>
-                                  <p style={{ color: "orange" }}>Confirm</p>
-                                </a>
-                              ) : (
-                                <div></div>
-                              )}
-                            </b>
-                          </td>
-                        )} */}
-                        {fddata(selectedData?._id).map((item, index) => (
-                          <div>
-                            {item.jobComplete === "YES" ? (
-                              <a onClick={() => confirm(selectedData?._id)}>
-                                <p style={{ color: "orange" }}>Confirm</p>
-                              </a>
-                            ) : (
-                              ""
-                            )}{" "}
-                            <div>{}</div>
-                          </div>
-                        ))}
+                          <>
+                            <Link
+                              to="/paymentfulldetails"
+                              className="tbl"
+                              state={{ data: selectedData, data1: date }}
+                            >
+                              {" "}
+                              <p style={{ color: "green" }}>Payment collect</p>
+                            </Link>
+
+                            <Link
+                              to="/raiseinvoice"
+                              state={{ data: selectedData, data1: date }}
+                            >
+                              <p style={{ color: "red" }}> Raise Invoice</p>
+                            </Link>
+                            <b></b>
+
+                            {fddata(selectedData?._id).map((item, index) => (
+                              <div>
+                                {item.jobComplete === "YES" ? (
+                                  <a onClick={() => confirm(selectedData?._id)}>
+                                    <p style={{ color: "orange" }}>Confirm</p>
+                                  </a>
+                                ) : (
+                                  ""
+                                )}{" "}
+                                <div>{}</div>
+                              </div>
+                            ))}
+                          </>
+                        )}
                       </>
                     )}
                   </td>
