@@ -88,6 +88,7 @@ function Home() {
     let res = await axios.get(apiURL + "/getservicedetails");
     if (res.status === 200) {
 
+      console.log("res.data?.servicedetails",res.data?.servicedetails)
       setService(res.data?.servicedetails);
     }
   };

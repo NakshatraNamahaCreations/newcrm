@@ -20,6 +20,7 @@ function Dsrdetails() {
   const admin = JSON.parse(sessionStorage.getItem("admin"));
   const location = useLocation();
   const { data, data1, TTname } = location.state || {};
+  console.log(TTname)
   const id = data?._id;
   const [dsrdata, setdsrdata] = useState([]);
   const [newcity, setnewcity] = useState(data?.city);
@@ -550,7 +551,7 @@ function Dsrdetails() {
         if (response.status === 200) {
           setShow1(false);
           alert("Updated");
-          window.location.assign("/dsrcategory");
+          window.location.assign(`/dsrcallist/${data1}/${data.category}`);
         } else {
           // Handle other status codes
           alert(`Unexpected status: ${response.status}`);
@@ -600,7 +601,7 @@ function Dsrdetails() {
       await axios(config).then(function (response) {
         if (response.status === 200) {
           alert("Successfully Added");
-          window.location.reload("");
+          window.location.assign(`/dsrcallist/${data1}/${data.category}`);
         }
       });
     } catch (error) {
@@ -608,6 +609,7 @@ function Dsrdetails() {
       alert("something went wrong");
     }
   };
+
 
   return (
     <div className="web">
@@ -1405,7 +1407,7 @@ function Dsrdetails() {
               </button>
             ) : (
               <button className="vhs-button" onClick={Reason ? Update : ""}>
-                Cancel
+       Update
               </button>
             )}
           </Modal.Footer>

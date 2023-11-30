@@ -353,7 +353,14 @@ setCaddres(item)
           // data: formdata,
           headers: { "content-type": "application/json" },
           data: {
-            customerData: customerdata[0],
+            customerData:{
+              _id:customerdata[0]?._id,
+              EnquiryId:customerdata[0]?.EnquiryId,
+              customerName:customerdata[0]?.customerName,
+              category:customerdata[0]?.category,
+              mainContact:customerdata[0]?.mainContact,
+              email:customerdata[0]?.email,
+            } ,
             dividedDates: dividedDates,
             dividedamtDates: dividedamtDates,
             dividedamtCharges: dividedamtCharges,

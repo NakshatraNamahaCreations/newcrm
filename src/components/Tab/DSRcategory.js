@@ -12,7 +12,7 @@ function DSRcategory() {
   const [servicedata, setservicedata] = useState([]);
   const apiURL = process.env.REACT_APP_API_URL;
   const [categorydata, setcategorydata] = useState([]);
-  const [dCategory, setcategory] = useState([]);
+  const [dCategory, setcategory] = useState("");
   const localizer = momentLocalizer(moment);
   const [view, setView] = React.useState("month"); // The current view of the calendar
 
@@ -93,18 +93,20 @@ function DSRcategory() {
 
   const postAllJobs = async () => {
     try {
-      const res = await axios.post(apiURL + "/postservicecat", {
+      const res = await axios.post(apiURL + "/postservicecatdevideddates", {
         category: dCategory,
       });
 
       if (res.status === 200) {
-        setdsrnewdata(res.data?.servicedetails);
+        setdsrnewdata(res.data?.dividedDates);
+
       }
     } catch (error) {
       console.error(error);
       // Handle error
     }
   };
+
 
   const getcategory = async () => {
     let res = await axios.get(apiURL + "/getcategory");

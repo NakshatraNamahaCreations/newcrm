@@ -22,81 +22,85 @@ function Dsrcallist() {
   const [searchTechName, setSearchTechName] = useState("");
   const [searchJobType, setSearchJobType] = useState("");
   const [searchDesc, setSearchDesc] = useState("");
-  const [vddata, setvddata] = useState([]);
-  const [techName, setTechName] = useState([]);
+
   const [searchpaymentMode, setsearchpaymentMode] = useState("");
 
   useEffect(() => {
     getservicedata();
-  }, [category]);
+  }, [category, date]);
 
-  useEffect(() => {}, [treatmentData]);
+  // const getservicedata = async () => {
+  //   let res = await axios.get(apiURL + "/getrunningdata");
+  //   if (res.status === 200) {
+  //     const data = res.data?.runningdata;
+  //     console.log("res.data?.runningdata",res.data?.runningdata)
 
-  useEffect(() => {
-    getnameof();
-  }, [category, date, dsrdata, treatmentData]);
+  //     const filteredData = data.filter((item) => {
+  //       const formattedDates = item.dividedDates.map((date) =>
+  //         moment(date.date).format("YYYY-MM-DD")
+  //       );
+  //       return formattedDates.includes(date) && item.category === category;
+  //     });
 
-  const getnameof = async () => {
-    let res = await axios.get(apiURL + "/getalltechnician");
-    if ((res.status = 200)) {
-      const TDdata = res.data?.technician;
-      const filteredTechnicians = TDdata.filter((technician) => {
-        return technician.category.some((cat) => cat.name === category);
-      });
-      setTechName(TDdata);
-      setvddata(
-        filteredTechnicians.filter(
-          (i) => i._id == dsrdata[0]?.TechorPMorVenodrID
-        )
-      );
-    }
-  };
+  //     settreatmentData(filteredData);
+  //     setSearchResults(filteredData);
+  //   }
+  // };
 
   const getservicedata = async () => {
-    let res = await axios.get(apiURL + "/getrunningdata");
-    if (res.status === 200) {
-      const data = res.data?.runningdata;
-
-      const filteredData = data.filter((item) => {
-        const formattedDates = item.dividedDates.map((date) =>
-          moment(date.date).format("YYYY-MM-DD")
-        );
-        return formattedDates.includes(date) && item.category === category;
+    try {
+      // Adjust the query parameters based on your filtering criteria
+      let res = await axios.get(apiURL + "/getservicedatawithaddcal", {
+        params: {
+          category: category,
+          date: date,
+        },
       });
 
-      settreatmentData(filteredData);
-      setSearchResults(filteredData);
-    }
-  };
-
-  useEffect(() => {
-    getAlldata();
-  }, [treatmentData]);
-
-  const getAlldata = async () => {
-    try {
-      const res = await axios.get(apiURL + "/getaggredsrdata");
-
       if (res.status === 200) {
-        const filteredData = res.data.addcall.filter((i) => {
-          const dateMatches = i.serviceDate === date;
-          // const cardNoMatches = treatmentData.some((treatmentItem) => {
-          //   return treatmentItem.cardNo === i.cardNo;
-          // });
+        const data = res.data?.runningdata;
+        // const filteredData = data.filter((item) => {
+        //    const formattedDates = item.dividedDates.map((date) =>
+        //    moment(date.date).format("YYYY-MM-DD")
+        //  );
+        //  return formattedDates.includes(date) && item.category === category;
+        //  });
 
-          return dateMatches;
-        });
-        setdsrdata1(res.data.addcall);
-        setdsrdata(filteredData);
-        // setTechData(mayiru);
+        settreatmentData(data);
+        setSearchResults(data);
       }
     } catch (error) {
-      // Handle any errors from the Axios request
+      // Handle errors
       console.error("Error fetching data:", error);
     }
   };
 
+  useEffect(() => {
+    // getAlldata();
+  }, [treatmentData]);
 
+  // const getAlldata = async () => {
+  //   try {
+  //     const res = await axios.get(apiURL + "/getaggredsrdata");
+
+  //     if (res.status === 200) {
+  //       const filteredData = res.data.addcall.filter((i) => {
+  //         const dateMatches = i.serviceDate === date;
+  //         // const cardNoMatches = treatmentData.some((treatmentItem) => {
+  //         //   return treatmentItem.cardNo === i.cardNo;
+  //         // });
+
+  //         return dateMatches;
+  //       });
+  //       setdsrdata1(res.data.addcall);
+  //       setdsrdata(filteredData);
+  //       // setTechData(mayiru);
+  //     }
+  //   } catch (error) {
+  //     // Handle any errors from the Axios request
+  //     console.error("Error fetching data:", error);
+  //   }
+  // };
 
   useEffect(() => {
     async function filterResults() {
@@ -146,16 +150,19 @@ function Dsrcallist() {
           results = results.filter((item) => {
             const mainContact = item.customerData[0]?.mainContact;
             if (typeof mainContact === "string") {
-              return mainContact.toLowerCase().includes(searchContact.toLowerCase());
+              return mainContact
+                .toLowerCase()
+                .includes(searchContact.toLowerCase());
             } else if (typeof mainContact === "number") {
               const stringMainContact = String(mainContact); // Convert number to string
-              return stringMainContact.toLowerCase().includes(searchContact.toLowerCase());
+              return stringMainContact
+                .toLowerCase()
+                .includes(searchContact.toLowerCase());
             }
             return false; // Exclude if mainContact is neither string nor number
           });
         }
-        
-        
+
         if (searchTechName) {
           results = results.filter(
             (item) =>
@@ -203,7 +210,7 @@ function Dsrcallist() {
     searchJobType,
     searchDesc,
     searchpaymentMode,
-    searchTechName
+    searchTechName,
   ]);
 
   let i = 1;
@@ -249,22 +256,6 @@ function Dsrcallist() {
 
     return filterStartTime[0]?.jobComplete;
   };
-  const charge = treatmentData.map((ele) => {
-    const foundCharge = ele.dividedDates.reduce((acc, ele1, index) => {
-      const dividedDate = new Date(ele1.date).getDate();
-
-      if (
-        dividedDate === new Date(ele.dividedamtDates[index]?.date).getDate() &&
-        dividedDate === new Date(paramsData).getDate()
-      ) {
-        return ele.dividedamtCharges[index].charge;
-      }
-
-      return acc;
-    }, null);
-
-    return foundCharge !== null ? foundCharge : 0;
-  });
 
   const returndata = (data) => {
     const dateToMatch = new Date(date);
@@ -283,28 +274,6 @@ function Dsrcallist() {
 
     return matchingData[0]?.charge;
   };
-  const allCities = treatmentData.reduce((cities, e) => {
-    const city = e.customerData[0]?.city;
-    if (city && !cities.includes(city)) {
-      cities.push(city);
-    }
-    return cities;
-  }, []);
-
-  const [citydata, setcitydata] = useState([]);
-
-  useEffect(() => {
-    getcity();
-  }, []);
-
-  const getcity = async () => {
-    let res = await axios.get(apiURL + "/master/getcity");
-    if ((res.status = 200)) {
-      setcitydata(res.data?.mastercity);
-    }
-  };
-
-console.log("treatment",treatmentData)
 
   return (
     <div className="web">
@@ -437,7 +406,9 @@ console.log("treatment",treatmentData)
                     <option value="">Select</option>
                     {[
                       ...new Set(
-                        treatmentData.map((item) => item.dsrdata[0]?.TechorPMorVendorName)
+                        treatmentData.map(
+                          (item) => item.dsrdata[0]?.TechorPMorVendorName
+                        )
                       ),
                     ].map((uniqueName) => (
                       <option value={uniqueName} key={uniqueName}>
@@ -563,7 +534,7 @@ console.log("treatment",treatmentData)
                     state={{
                       data: selectedData,
                       data1: date,
-                      TTname: passfunction(selectedData),
+                      TTname: selectedData.dsrdata[0]?.TechorPMorVendorName,
                     }}
                   >
                     <td>{i++}</td>
@@ -576,7 +547,7 @@ console.log("treatment",treatmentData)
                     {/* {selectedData.city ? (
                       <td>{selectedData.city}</td>
                     ) : ( */}
-                      <td>{selectedData.customerData[0]?.city}</td>
+                    <td>{selectedData.customerData[0]?.city}</td>
                     {/* )} */}
                     <td>
                       {selectedData?.deliveryAddress
@@ -585,9 +556,7 @@ console.log("treatment",treatmentData)
                         ${selectedData.deliveryAddress?.address} - 
                         ${selectedData.deliveryAddress?.landmark}
                         `
-                        : `${selectedData.customer[0]?.rbhf} ,
-                       ${selectedData.customer[0]?.cnap} ,
-                       ${selectedData.customer[0]?.lnf}`}
+                        : ""}
                     </td>
 
                     <td>{selectedData.customerData[0]?.mainContact}</td>
@@ -647,11 +616,14 @@ console.log("treatment",treatmentData)
                       <td>{selectedData?.GrandTotal}</td>
                     ) : (
                       <td>
-                        {returndata(selectedData)
+                        {selectedData.contractType === "AMC"
                           ? returndata(selectedData)
-                          : "0"}
+                            ? returndata(selectedData)
+                            : "0"
+                          : selectedData.serviceCharge}
                       </td>
                     )}
+
                     <td>
                       {SERVICECANCLE(selectedData)}
                       {selectedData.paymentMode}
