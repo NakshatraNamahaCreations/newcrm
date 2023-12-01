@@ -52,9 +52,14 @@ function Paymentfilterlist() {
   }, [treatmentData]);
 
   const getAlldata = async () => {
-    let res = await axios.get(apiURL + "/getaggredsrdata");
-    if (res.status === 200) {
-      setdsrdata(res.data.addcall.filter((i) => i.serviceDate === date));
+    try {
+      const res = await axios.get(apiURL + `/filteredservicedate/${date}`);
+
+      if (res.status === 200) {
+        setdsrdata(res.data.filterwithservicedata); // Assuming the response has the correct key
+      }
+    } catch (error) {
+      // Handle error
     }
   };
 
@@ -179,8 +184,6 @@ function Paymentfilterlist() {
     return pendingAmount.toFixed(2); // Format the pending amount with two decimal places
   }
 
-  const zero = 0;
-
   const confirm = async (id) => {
     try {
       const config = {
@@ -195,9 +198,7 @@ function Paymentfilterlist() {
       };
       await axios(config).then(function (response) {
         if (response.status === 200) {
-          // setShow(false);
-
-          alert("updated");
+          window.location.assign(`paymentfilterlist/${date}`);
         }
       });
     } catch (error) {
@@ -205,8 +206,39 @@ function Paymentfilterlist() {
       alert("Somthing went wrong");
     }
   };
+  const [totalGrandTotal, setTotalGrandTotal] = useState(0);
+  const calculateColumnTotals = () => {
+    let grandTotal = 0;
 
-  console.log("selectedData", searchResults);
+    searchResults.forEach((selectedData) => {
+      // Calculate the grand total
+      if (selectedData?.type === "userapp") {
+        grandTotal += Number(selectedData?.GrandTotal) || 0;
+
+
+      } else {
+        if (selectedData.dividedamtCharges.length > 0) {
+          grandTotal += Number(selectedData.dividedamtCharges[0].charge) || 0;
+        }
+      }
+      // ... Calculate other totals for different columns similarly
+    });
+
+    // Update state with the calculated totals
+    setTotalGrandTotal(grandTotal);
+    // ... Update other state variables for different columns similarly
+  };
+
+  useEffect(() => {
+    // Call the function to calculate totals when searchResults changes
+    calculateColumnTotals();
+
+  }, [searchResults]);
+
+  
+
+  
+  
 
   return (
     <div className="web">
@@ -231,7 +263,10 @@ function Paymentfilterlist() {
         <div className="col-md-12">
           <table style={{ width: "113%" }} class=" table-bordered mt-1">
             <thead className="">
-              <tr className="table-secondary" style={{background:"lightgrey"}}>
+              <tr
+                className="table-secondary"
+                style={{ background: "lightgrey" }}
+              >
                 <th className="table-head" scope="col"></th>
 
                 <th
@@ -304,7 +339,10 @@ function Paymentfilterlist() {
                 // <th scope="col" className="table-head"></th>
                 <th scope="col" className="table-head"></th> */}
               </tr>
-              <tr className="table-secondary" style={{background:"lightgrey"}}> 
+              <tr
+                className="table-secondary"
+                style={{ background: "lightgrey" }}
+              >
                 <th className="table-head" scope="col">
                   Sr.No
                 </th>
@@ -407,6 +445,7 @@ function Paymentfilterlist() {
                   <td>{selectedData.service}</td>
 
                   <td>{selectedData.desc}</td>
+
                   {selectedData?.type === "userapp" ? (
                     <td>{selectedData?.GrandTotal}</td>
                   ) : (
@@ -601,6 +640,21 @@ function Paymentfilterlist() {
                   </td>
                 </tr>
               ))}
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{totalGrandTotal}</td>
+                <td></td>
+                <td></td>
+              </tr>
             </tbody>
           </table>{" "}
         </div>

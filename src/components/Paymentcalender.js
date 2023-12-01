@@ -109,17 +109,15 @@ function Paymentcalender() {
     count: eventCounts[date],
   }));
 
-  console.log("myEventsList",myEventsList)
+
 
   const handleSelectEvent = (event) => {
     const selectedDate = moment(event.start).format("YYYY-MM-DD");
     const selectedData = dsrdata.filter((item) => item.dividedamtDates);
-    console.log("selectedDatainDSRCatagory", selectedData); // Add this line to check the value
-    navigate(`/paymentfilterlist/${selectedDate}`, {
-      state: { data: selectedData },
-    });
-  };
 
+    navigate(`/paymentfilterlist/${selectedDate}`
+    );
+  }
   return (
     <div className="web">
       <Header />
@@ -130,31 +128,7 @@ function Paymentcalender() {
           <div className="p-3">
             <h4>Payment Reports</h4>
           </div>
-          {/* <div className="card" style={{ marginTop: "30px" }}>
-            <div className="card-body p-3">
-              <form>
-                <div className="row">
-                  <div className="col-md-4">
-                    <div className="vhs-input-label">Category</div>
-                    <div className="group pt-1">
-                      <select
-                        className="col-md-12 vhs-input-value"
-                        onChange={(e) => setcategory(e.target.value)}
-                      >
-                        <option>-select-</option>
-                        {admin?.category.map((category, index) => (
-                          <option key={index} value={category.name}>
-                            {category.name}
-                          </option>
-                        ))}
-                       
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div> */}
+       
           <div style={{ width: "94%", margin: "3%" }}>
             <Calendar
               localizer={localizer}

@@ -19,7 +19,7 @@ function Customersearchdetails() {
   const [categoryData, setCategoryData] = useState([]);
   const [serviceFrequency, setserviceFrequency] = useState(1);
   const [expiryDate, setexpiryDate] = useState("00-00-0000");
-  // const [category, setcategory] = useState("");
+
   const [firstserviceDate, setfirstserviceDate] = useState("00-00-0000");
   const [contractType, setcontractType] = useState("");
   const [serviceId, setServiceId] = useState("");
@@ -27,6 +27,7 @@ function Customersearchdetails() {
   const [treatment, settreatment] = useState("");
   const [oneCommunity, setOneCommunity] = useState({}); //string to obj
   const [treatmentdata, settreatmentdata] = useState([]);
+console.log("treatmentdata",treatmentdata)
   const [customerdata, setcustomerdata] = useState([]);
   const [servicedata, setservicedata] = useState([]);
   const [editenable, seteditEnable] = useState(false);
@@ -39,7 +40,7 @@ function Customersearchdetails() {
   const [whatsappdata, setwhatsappdata] = useState([]);
   const [customerAddressdata, setcustomerAddressdata] = useState([]);
   const [newCharge, setnewCharge] = useState("");
-  // delivery address
+
   const [houseNumber, setHouseNumber] = useState("");
   const [streetName, setStreetName] = useState("");
   const [city, setCity] = useState("");

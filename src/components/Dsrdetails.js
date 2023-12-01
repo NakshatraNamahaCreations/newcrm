@@ -20,7 +20,7 @@ function Dsrdetails() {
   const admin = JSON.parse(sessionStorage.getItem("admin"));
   const location = useLocation();
   const { data, data1, TTname } = location.state || {};
-  console.log(TTname)
+
   const id = data?._id;
   const [dsrdata, setdsrdata] = useState([]);
   const [newcity, setnewcity] = useState(data?.city);
@@ -45,9 +45,7 @@ function Dsrdetails() {
   const [complaintRef, setcomplaintRefo] = useState([]);
   const [vendordata, setvendordata] = useState([]);
   const [serviceData, setServiceData] = useState([]);
-  // const [Showinapp, setShowinapp] = useState(
-  //   data.dsrdata[0]?.showinApp  ? data.dsrdata[0]?.showinApp : true
-  // );
+
   const [Showinapp, setShowinapp] = useState(
     data.dsrdata[0]?.showinApp || "YES"
   );
@@ -88,13 +86,11 @@ function Dsrdetails() {
 
   const [selectedTechId, setSelectedTechId] = useState("");
 
-  const [LatestCardNo, setLatestCardNo] = useState(0);
   const [whatsappTemplate, setWhatsappTemplate] = useState("");
   const [whatsappdata, setwhatsappdata] = useState([]);
 
   useEffect(() => {
     gettechnician();
-    getaddcall();
 
     getServiceManagement();
   }, []);
@@ -203,7 +199,42 @@ function Dsrdetails() {
         headers: { "content-type": "application/json" },
         data: {
           serviceDate: data1,
-          serviceInfo: data,
+          serviceInfo:{
+
+            customerData:data.customerData,
+            dCategory:data.dCategory,
+            cardNo:data.cardNo,
+            contractType:data.contractType,
+            service:data.service,
+            planName:data.planName,
+            slots:data.slots, 
+            serviceId:data.serviceId,
+            serviceCharge:data.serviceCharge,
+       
+            desc:data.desc,
+         
+            category:data.category,
+            expiryDate:data.expiryDate,
+          
+            dividedDates:data.dividedDates,
+            dividedCharges:data.dividedCharges,
+            dividedamtDates:data.dividedamtDates,
+            dividedamtCharges:data.dividedamtCharges,
+            oneCommunity:data.oneCommunity,
+            communityId:data.communityId,
+            BackofficeExecutive:data.BackofficeExecutive,
+            deliveryAddress:data.deliveryAddress,
+            type:data.type,
+            userId:data.userId,
+            selectedSlotText:data.selectedSlotText,
+            AddOns:data.AddOns,
+            TotalAmt:data.TotalAmt,
+            GrandTotal:data.GrandTotal,
+          
+       
+            city:data.city,
+                  
+          } ,
           serviceId: data?._id,
           cardNo: data.cardNo,
           category: data.category,
@@ -301,14 +332,6 @@ function Dsrdetails() {
     }
   };
 
-  const getaddcall = async () => {
-    let res = await axios.get(apiURL + "/getalldsrlist");
-    if (res.status === 200) {
-      setLatestCardNo(res.data?.addcall[0]?.complaintRef);
-      // console.log("allCustomer----", res.data?.addcall[0]?.complaintRef);
-    }
-  };
-
   const getServiceManagement = async () => {
     let res = await axios.get(apiURL + "/userapp/getservices");
     if (res.status === 200) {
@@ -319,7 +342,20 @@ function Dsrdetails() {
     }
   };
 
-  const getServieSlots = serviceData;
+  useEffect(() => {
+    getreschdatauser();
+  }, [])
+  
+const [reshduleData, setreshduleData] = useState([]);
+  const getreschdatauser = async () => {
+    let res = await axios.get(apiURL + `/filterwithserviceId/${data?._id}`);
+    if (res.status === 200) {
+      setreshduleData(
+        res.data?.recheduledata)
+
+      // console.log(res.data?.service);
+    }
+  };
 
   const customerCity = data.city;
 
@@ -347,13 +383,18 @@ function Dsrdetails() {
   }, [data]);
 
   const getAlldata = async () => {
-    let res = await axios.get(apiURL + "/getalldsrlist");
-    if (res.status === 200) {
-      setdsrdata(
-        res.data.addcall.filter(
-          (i) => i.serviceDate === data1 && i.serviceId === data?._id
-        )
+    try {
+      const res = await axios.get(
+        apiURL + `/filteredserviceIDanddate/${data1}/${data?._id}`
       );
+
+      if (res.status === 200) {
+        setdsrdata(res.data.filterwithservicedata);
+      } else {
+        setdsrdata([]);
+      }
+    } catch (error) {
+      // Handle error
     }
   };
 
@@ -552,10 +593,7 @@ function Dsrdetails() {
           setShow1(false);
           alert("Updated");
           window.location.assign(`/dsrcallist/${data1}/${data.category}`);
-        } else {
-          // Handle other status codes
-          alert(`Unexpected status: ${response.status}`);
-        }
+        } 
       } catch (error) {
         if (error.response) {
           alert(`Server error: ${error.response.data.message}`);
@@ -610,7 +648,7 @@ function Dsrdetails() {
     }
   };
 
-
+  const today = new Date().toISOString().split('T')[0]; 
   return (
     <div className="web">
       <Header />
@@ -664,6 +702,7 @@ function Dsrdetails() {
                       className="col-md-12 vhs-input-value"
                       defaultValue={data1}
                       onChange={(e) => setappoDate(e.target.value)}
+                      min={today}
                     />
                   </div>
                 </div>
@@ -671,18 +710,7 @@ function Dsrdetails() {
                 <div className="col-md-4">
                   <div className="vhs-input-label">Appointment Time</div>
                   <div className="group pt-1">
-                    {/* <select
-                      className="col-md-12 vhs-input-value"
-                      onChange={(e) => setappoTime(e.target.value)}
-                      defaultValue={data.selectedSlotText}
-                    >
-                      <option>{data.selectedSlotText}</option>
-                      {filteredSlots?.map((slot, index) => (
-                        <option key={index} value={`${slot.startTime}`}>
-                          {`${slot.startTime} `}
-                        </option>
-                      ))}
-                    </select> */}
+                 
 
                     <select
                       className="col-md-12 vhs-input-value"
@@ -715,7 +743,7 @@ function Dsrdetails() {
                       )}
                     </select>
 
-                    <p>Time Given</p>
+                 
                   </div>
                 </div>
                 <div className="col-md-4">
@@ -734,7 +762,7 @@ function Dsrdetails() {
                       ))}
                     </select>
 
-                    <p>Time Given</p>
+         
                   </div>
                 </div>
               </div>
@@ -747,21 +775,25 @@ function Dsrdetails() {
                       <button onClick={() => setShow1(true)}>
                         Reschedule date
                       </button>
-                      {data?.reason ? (
+                      {reshduleData ? (
+                        reshduleData.map((item)=>(
+
+        
                         <div>
                           <p style={{ color: "orange" }}>
                             Rescheduled this services
                           </p>
                           <div style={{ fontWeight: "bold" }}>OPM Details</div>
                           <p style={{ marginBottom: 0 }}>
-                            {data.ResheduleUser}
+                            {item.name}
                           </p>
                           <p style={{ marginBottom: 0 }}>
-                            {data.ResheduleUsernumber}
+                            {item.number}
                           </p>
-                          <p style={{ marginBottom: 0 }}>{data.reason}</p>
-                          <p>{data.resDate}</p>
+                          <p style={{ marginBottom: 0 }}>{item.reason}</p>
+                          <p>{(moment(item.createdAt).format("MMMM Do YYYY, h:mm:ss a"))}</p>
                         </div>
+                                        ))
                       ) : (
                         <></>
                       )}
@@ -771,10 +803,13 @@ function Dsrdetails() {
                   )}
                 </div>
                 <div className="col-md-4">
-                <button onClick={editservicedetails} style={{width:"150px"}}>
-                   Update App/city
-                      </button>
-                  </div>
+                  <button
+                    onClick={editservicedetails}
+                    style={{ width: "150px" }}
+                  >
+                    Update Appo/City
+                  </button>
+                </div>
               </div>
               <h5 className="mt-3">Customer Information</h5>
               <hr />
@@ -1399,15 +1434,15 @@ function Dsrdetails() {
           </Modal.Body>
           <Modal.Footer>
             <button className="vhs-button" onClick={handleClose}>
-              Close
+              No
             </button>
             {!dsrdata[0] ? (
               <button className="vhs-button" onClick={Reason ? newdata : ""}>
-                Cancel
+                Yes
               </button>
             ) : (
               <button className="vhs-button" onClick={Reason ? Update : ""}>
-       Update
+                Yes
               </button>
             )}
           </Modal.Footer>

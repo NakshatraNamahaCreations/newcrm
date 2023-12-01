@@ -9,10 +9,10 @@ import { Co2Sharp } from "@mui/icons-material";
 function Dsrcallist() {
   const apiURL = process.env.REACT_APP_API_URL;
   const { date, category } = useParams();
-  const paramsData = date;
+
   const [treatmentData, settreatmentData] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const [dsrdata, setdsrdata] = useState([]);
+
   const [dsrdata1, setdsrdata1] = useState([]);
   const [searchJobCatagory, setSearchJobCatagory] = useState("");
   const [searchCustomerName, setSearchCustomerName] = useState("");
@@ -23,33 +23,15 @@ function Dsrcallist() {
   const [searchJobType, setSearchJobType] = useState("");
   const [searchDesc, setSearchDesc] = useState("");
 
+
   const [searchpaymentMode, setsearchpaymentMode] = useState("");
 
   useEffect(() => {
     getservicedata();
   }, [category, date]);
 
-  // const getservicedata = async () => {
-  //   let res = await axios.get(apiURL + "/getrunningdata");
-  //   if (res.status === 200) {
-  //     const data = res.data?.runningdata;
-  //     console.log("res.data?.runningdata",res.data?.runningdata)
-
-  //     const filteredData = data.filter((item) => {
-  //       const formattedDates = item.dividedDates.map((date) =>
-  //         moment(date.date).format("YYYY-MM-DD")
-  //       );
-  //       return formattedDates.includes(date) && item.category === category;
-  //     });
-
-  //     settreatmentData(filteredData);
-  //     setSearchResults(filteredData);
-  //   }
-  // };
-
   const getservicedata = async () => {
     try {
-      // Adjust the query parameters based on your filtering criteria
       let res = await axios.get(apiURL + "/getservicedatawithaddcal", {
         params: {
           category: category,
@@ -58,16 +40,8 @@ function Dsrcallist() {
       });
 
       if (res.status === 200) {
-        const data = res.data?.runningdata;
-        // const filteredData = data.filter((item) => {
-        //    const formattedDates = item.dividedDates.map((date) =>
-        //    moment(date.date).format("YYYY-MM-DD")
-        //  );
-        //  return formattedDates.includes(date) && item.category === category;
-        //  });
-
-        settreatmentData(data);
-        setSearchResults(data);
+        settreatmentData(res.data?.runningdata);
+        setSearchResults(res.data?.runningdata);
       }
     } catch (error) {
       // Handle errors
@@ -76,31 +50,20 @@ function Dsrcallist() {
   };
 
   useEffect(() => {
-    // getAlldata();
+    getAlldata();
   }, [treatmentData]);
 
-  // const getAlldata = async () => {
-  //   try {
-  //     const res = await axios.get(apiURL + "/getaggredsrdata");
+  const getAlldata = async () => {
+    try {
+      const res = await axios.get(apiURL + `/filteredservicedate/${date}`);
 
-  //     if (res.status === 200) {
-  //       const filteredData = res.data.addcall.filter((i) => {
-  //         const dateMatches = i.serviceDate === date;
-  //         // const cardNoMatches = treatmentData.some((treatmentItem) => {
-  //         //   return treatmentItem.cardNo === i.cardNo;
-  //         // });
-
-  //         return dateMatches;
-  //       });
-  //       setdsrdata1(res.data.addcall);
-  //       setdsrdata(filteredData);
-  //       // setTechData(mayiru);
-  //     }
-  //   } catch (error) {
-  //     // Handle any errors from the Axios request
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
+      if (res.status === 200) {
+        setdsrdata1(res.data.filterwithservicedata);
+      }
+    } catch (error) {
+      // Handle error
+    }
+  };
 
   useEffect(() => {
     async function filterResults() {
@@ -217,7 +180,7 @@ function Dsrcallist() {
 
   const passfunction = (sId) => {
     const filt = dsrdata1.filter(
-      (i) => i.serviceInfo[0]?._id === sId._id && i.serviceDate == date
+      (i) => i.serviceInfo[0]?._id === sId._id && i.serviceDate === date
     );
     const TTnameValue = filt[0]?.TechorPMorVendorName;
 
@@ -475,15 +438,10 @@ function Dsrcallist() {
                 <th scope="col" className="table-head">
                   Contact No.
                 </th>
-                {dsrdata[0]?.techName === "PM" ? (
-                  <th scope="col" className="table-head">
-                    Project manager
-                  </th>
-                ) : (
-                  <th scope="col" className="table-head">
-                    Technician
-                  </th>
-                )}
+
+                <th scope="col" className="table-head">
+                  Technician
+                </th>
 
                 {/* <th scope="col" className="table-head">
                   Worker Name
@@ -624,10 +582,7 @@ function Dsrcallist() {
                       </td>
                     )}
 
-                    <td>
-                      {SERVICECANCLE(selectedData)}
-                      {selectedData.paymentMode}
-                    </td>
+                    <td>{selectedData.paymentMode}</td>
                     <td>{selectedData.desc}</td>
                   </Link>
                 </tr>

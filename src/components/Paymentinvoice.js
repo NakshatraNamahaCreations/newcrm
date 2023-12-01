@@ -21,7 +21,7 @@ function Paymentinvoice() {
 
   const [section2data, setsection2data] = useState([]);
 
-  console.log(data);
+
 
   useEffect(() => {
     gettermsgroup();
@@ -156,16 +156,7 @@ function Paymentinvoice() {
                       </td>
 
                       <td className="text-center">{data?.contractType}</td>
-                      {/* {(data?.contractType ==="AMC") ? <td>
-                        {data.dividedDates.map((item) => (
-                          <div>
-                            <p className="text-center">
-                              {new Date(item).toLocaleDateString()}
-                            </p>
-                          </div>
-                        ))}
-                      </td>:<td>{data?.dateofService}</td>} */}
-
+                     
                       {data?.contractType === "AMC" ? (
                         <td className="text-center">{data1}</td>
                       ) : (
@@ -197,7 +188,7 @@ function Paymentinvoice() {
                   </h5>
                 </div>
 
-                {/* <div className="row m-auto mt-3 hclr">Terms & Condition</div> */}
+              
               </div>
             </div>
             <div className="text-end px-2" style={{ fontWeight: "bold" }}>
