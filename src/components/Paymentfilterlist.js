@@ -116,11 +116,17 @@ function Paymentfilterlist() {
       if (searchContact) {
         results = results.filter((item) => {
           const mainContact = item.customerData[0]?.mainContact;
-          if (typeof mainContact === "number") {
-            // Convert contactNo to a string before comparing (assuming it's a number)
-            return mainContact.toString().includes(searchContact);
+          if (typeof mainContact === "string") {
+            return mainContact
+              .toLowerCase()
+              .includes(searchContact.toLowerCase());
+          } else if (typeof mainContact === "number") {
+            const stringMainContact = String(mainContact); // Convert number to string
+            return stringMainContact
+              .toLowerCase()
+              .includes(searchContact.toLowerCase());
           }
-          return false;
+          return false; // Exclude if mainContact is neither string nor number
         });
       }
       if (searchTechName) {
@@ -290,14 +296,13 @@ function Paymentfilterlist() {
                     onChange={(e) => setSearchCity(e.target.value)}
                   >
                     <option value="">Select</option>
-                    {treatmentData.map((e) => (
-                      <option
-                        value={e.customerData[0]?.city}
-                        key={e.customerData[0]?.city}
-                      >
-                        {e.customerData[0]?.city}{" "}
-                      </option>
-                    ))}
+                    {[...new Set(treatmentData.map((city) => city.city))].map(
+                      (uniqueCity) => (
+                        <option value={uniqueCity} key={uniqueCity}>
+                          {uniqueCity}
+                        </option>
+                      )
+                    )}
                   </select>{" "}
                 </th>
                 <th scope="col" style={{ width: "15%" }} className="table-head">

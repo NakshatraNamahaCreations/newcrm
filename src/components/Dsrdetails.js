@@ -438,7 +438,7 @@ const [reshduleData, setreshduleData] = useState([]);
       if (res.status === 200) {
         // console.log("whatsapp template", res.data);
         let getTemplateDatails = res.data?.whatsapptemplate?.filter(
-          (item) => item.templatename === "Send Invoice Link (Painting)"
+          (item) => item.templatename === "Send Invoice Link"
         );
         setwhatsappdata(getTemplateDatails);
       }
@@ -489,6 +489,7 @@ const [reshduleData, setreshduleData] = useState([]);
 
     const invoiceUrl = `https://vijayhomeservicebengaluru.in/dsr_invoice_bill?id=${id}`;
 
+    console.log("invoiceUrl",invoiceUrl)
     const invoiceLink = serivePrice.replace(
       /\{Invoice_link\}/g,
       `[Click to view invoice](${invoiceUrl})`

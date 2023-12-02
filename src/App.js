@@ -168,6 +168,7 @@ import SendMessages from "./components/SendMessages";
 import DSR_Invoice from "./components/DSR_Invoice";
 import Test from "./components/Test";
 import New from "./components/Tab/New";
+import Quotations from "./components/Tab/Quotations";
 
 function App() {
   return (
@@ -361,6 +362,7 @@ function App() {
           />
         </Route>
         <Route path="/" element={<Login />} />
+        <Route path="/quotations" element={<Quotations />} />
         <Route path="/quotationterm" element={<Quotationterm />} />
         <Route path="/servicebill" element={<Servicebill />} />
         <Route path="/dsrquote/:id" element={<Dsrquote />} />

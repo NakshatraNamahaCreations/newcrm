@@ -12,12 +12,16 @@ function Createquote() {
   const location = useLocation();
   const { data } = location.state;
 
+  console.log("data", data);
 
   const [techniciandata, settechniciandata] = useState([]);
   const [vendordata, setvendordata] = useState([]);
   const apiURL = process.env.REACT_APP_API_URL;
   const [technician, settechnician] = useState();
-  const [appoDate, setappoDate] = useState(data.nxtfoll);
+  const [appoDate, setappoDate] = useState(
+    data?.appoDate ? data?.appoDate : data?.nxtfoll
+  );
+
   const [appoTime, setappTime] = useState(
     data.appoTime ? data.appoTime : moment().format("LT")
   );
@@ -35,7 +39,6 @@ function Createquote() {
     settype(event.target.value);
   };
   const [serviceId, setServiceId] = useState("");
-
 
   useEffect(() => {
     gettechnician();
@@ -87,7 +90,6 @@ function Createquote() {
     getServicebyCategory();
   }, [data?.category]);
 
-
   useEffect(() => {
     const getSlotsByService = async () => {
       try {
@@ -105,7 +107,7 @@ function Createquote() {
     if (serviceId) {
       getSlotsByService();
     }
-  }, [serviceId,data]);
+  }, [serviceId, data]);
 
   useEffect(() => {
     getwhatsapptemplate();
@@ -118,24 +120,35 @@ function Createquote() {
     }
   };
 
+  useEffect(() => {
+    getallslots();
+  }, []);
+
+  const [slotdata, setslotdata] = useState([]);
+
+  const getallslots = async () => {
+    let res = await axios.get(apiURL + "/getwhatsapptemplate");
+    if (res.status === 200) {
+      setslotdata(res.data?.slots);
+    }
+  };
+
   let getTemplateDatails = whatsappdata.find(
     (item) => item.templatename === "Survey Add"
   );
 
- 
   const Save = async (e) => {
     e.preventDefault();
     try {
-      console.log(technician?._id)
+      console.log(technician?._id);
       const config = {
         url: `/updateserviceexe/${data._id}`,
         method: "post",
         baseURL: apiURL,
         headers: { "content-type": "application/json" },
         data: {
-         
           technicianname: technician.vhsname,
-          techId:technician?._id,
+          techId: technician?._id,
           appoDate: appoDate,
           appoTime: appoTime,
           sendSms: sendSms,
@@ -167,8 +180,6 @@ function Createquote() {
     const accessToken = "c7475f11-97cb-4d52-9500-f458c1a377f4";
 
     const contentTemplate = selectedResponse?.template || "";
-
-
 
     if (!contentTemplate) {
       console.error("Content template is empty. Cannot proceed.");
@@ -207,17 +218,14 @@ function Createquote() {
     const callTime = callDate.replace(/\{Call_time\}/g, data?.appoTime);
     const plainTextContent = stripHtml(callTime);
 
-
-    
     // Replace <p> with line breaks and remove HTML tags
     const convertedText = callTime
-    .replace(/<p>/g, "\n")
-    .replace(/<\/p>/g, "")
-    .replace(/<br>/g, "\n")
-    .replace(/&nbsp;/g, "")
-    .replace(/<strong>(.*?)<\/strong>/g, "<b>$1</b>")
-    .replace(/<[^>]*>/g, "");
-  
+      .replace(/<p>/g, "\n")
+      .replace(/<\/p>/g, "")
+      .replace(/<br>/g, "\n")
+      .replace(/&nbsp;/g, "")
+      .replace(/<strong>(.*?)<\/strong>/g, "<b>$1</b>")
+      .replace(/<[^>]*>/g, "");
 
     const requestData = [
       {
@@ -262,10 +270,8 @@ function Createquote() {
         state: { data: data },
       });
     } else {
-     
     }
   };
- 
 
   return (
     <div className="web">
@@ -396,7 +402,7 @@ function Createquote() {
                       <input
                         type="date"
                         className="col-md-12 vhs-input-value"
-                        defaultValue={data.nxtfoll}
+                        defaultValue={data?.appoDate}
                         onChange={(e) => setappoDate(e.target.value)}
                       />
                     </div>
@@ -460,10 +466,7 @@ function Createquote() {
                     <div className="col-md-4 mt-3">
                       {type === "executive" ? (
                         <div>
-                          <div className="vhs-input-label">
-                            Executive Name
-                            {/* <span className="text-danger">*</span> */}
-                          </div>
+                          <div className="vhs-input-label">Executive Name</div>
                           <select
                             className="col-md-12 vhs-input-value"
                             onChange={(e) => {
@@ -509,21 +512,6 @@ function Createquote() {
                           </select>
                         </div>
                       )}
-                    </div>
-                    <div className="col-4 mt-3"></div>
-                    <div className="col-md-4 mt-3">
-                      <div className="vhs-input-label">
-                        Send SMS
-                        {/* <span className="text-danger">*</span> */}
-                      </div>
-                      <select
-                        className="col-md-12 vhs-input-value"
-                        onChange={(e) => setsendSms(e.target.value)}
-                      >
-                        <option>--select--</option>
-                        <option value="NO">NO</option>
-                        <option value="YES">Yes</option>
-                      </select>
                     </div>
                   </div>
                 </div>

@@ -202,15 +202,23 @@ function Enquiryadd() {
       admin?.contactno
     );
 
-    const plainTextContent = stripHtml(contentWithMobile);
-    const contentWithLineBreaks = plainTextContent.replace(/\n/g, "%0a");
-    console.log("plainTextContent", contentWithLineBreaks);
+   
+
+   
+      // Replace <p> with line breaks and remove HTML tags
+      const convertedText = contentWithMobile
+      .replace(/<p>/g, "\n")
+      .replace(/<\/p>/g, "")
+      .replace(/<br>/g, "\n")
+      .replace(/&nbsp;/g, "")
+      .replace(/<strong>(.*?)<\/strong>/g, "<b>$1</b>")
+      .replace(/<[^>]*>/g, "");
     const requestData = [
       {
         dst: "91" + contactNumber,
         messageType: "0",
         textMessage: {
-          content: contentWithLineBreaks,
+          content: convertedText,
         },
       },
     ];
@@ -224,7 +232,7 @@ function Enquiryadd() {
 
       if (response.status === 200) {
         setWhatsappTemplate(response.data);
-        alert("Sent");
+ 
       } else {
         console.error("API call unsuccessful. Status code:", response.status);
       }
@@ -233,11 +241,7 @@ function Enquiryadd() {
     }
   };
 
-  function stripHtml(html) {
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    const plainText = doc.body.textContent || "";
-    return plainText.replace(/\r?\n/g, " "); // Remove all HTML tags but keep line breaks
-  }
+
 
   useEffect(() => {
     getcity();
