@@ -241,9 +241,39 @@ function Paymentfilterlist() {
 
   }, [searchResults]);
 
-  
 
-  
+  const calculateTotalAmount = (searchResults, paymentMode) => {
+    return searchResults.reduce((total, selectedData) => {
+      const matchingPayments = selectedData.paymentData.filter(
+        (i) =>
+          i.paymentType === "Customer" &&
+          (i.serviceId === selectedData._id ||
+            i.serviceId === selectedData.serviceId) &&
+          (i.paymentMode === paymentMode ||
+            (paymentMode === "cash" && i.paymentMode === "Cash"))
+      );
+
+      const subtotal = matchingPayments.reduce(
+        (subtotal, payment) => subtotal + parseFloat(payment.amount),
+        0
+      );
+
+      console.log("Matching payments:", matchingPayments);
+      console.log("Subtotal:", subtotal);
+
+      return total + subtotal;
+    }, 0);
+  };
+
+
+  const cashTotal = calculateTotalAmount(searchResults, "cash");
+  const onlineTotal = calculateTotalAmount(searchResults, "online");
+  const googlepeTotal = calculateTotalAmount(searchResults, "Google Pay");
+  const phonepeyTotal = calculateTotalAmount(searchResults, "PhonePe");
+  const chequeTotal = calculateTotalAmount(searchResults, "Cheque");
+  const paytmTotal = calculateTotalAmount(searchResults, "online");
+  const NEFTTotal = calculateTotalAmount(searchResults, "NEFT");
+  const IMPSTotal = calculateTotalAmount(searchResults, "IMPS");
   
 
   return (
@@ -425,7 +455,7 @@ function Paymentfilterlist() {
                   {selectedData?.type === "userapp" ? (
                     <td>{selectedData.city}</td>
                   ) : (
-                    <td>{selectedData.customerData[0]?.city}</td>
+                    <td>{selectedData.city}</td>
                   )}
 
                   <td>{selectedData.paymentMode}</td>
@@ -658,7 +688,28 @@ function Paymentfilterlist() {
                 <td></td>
                 <td>{totalGrandTotal}</td>
                 <td></td>
-                <td></td>
+                <td>
+                    {/* Display payment modes total amount */}
+                    <b>Online: {onlineTotal.toFixed(2)}</b>
+                    <br />
+                    <b>Cash: {cashTotal.toFixed(2)}</b> <br />
+                    <b>Cheque: {chequeTotal.toFixed(2)}</b>
+                    <br />
+                    <b>Phone pe: {phonepeyTotal.toFixed(2)}</b>
+                    <br />
+                    <b>Google pay: {googlepeTotal.toFixed(2)}</b>
+                    <br />
+                    <b>Paytm : {paytmTotal.toFixed(2)}</b>
+                    <br />
+                    <b>NEFT Total: {NEFTTotal.toFixed(2)}</b>
+                    
+                    <br />
+                    <b>IMPS Total: {IMPSTotal.toFixed(2)}</b>
+                    <br />
+                  </td>
+
+
+              
               </tr>
             </tbody>
           </table>{" "}

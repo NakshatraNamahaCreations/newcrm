@@ -25,11 +25,12 @@ function Quotelist() {
   const [searchTotal, setsearchTotal] = useState("");
   const [searchExecutive, setsearchExecutive] = useState("");
   const [searchStaff, setSearchStaff] = useState("");
-  const [searchResponse, setSearchResponse] = useState("");
+  const [bookedBy, setbookedBy] = useState("");
   const [searchDesc, setSearchDesc] = useState("");
   const [searchNxtfoll, setSearchNxtfoll] = useState("");
   const [Type, setType] = useState("");
-
+  const [duplicateCategory, setDuplicateCategory] = useState(new Set());
+  const [duplicateCity, setDuplicateCity] = useState(new Set());
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(25);
@@ -48,7 +49,29 @@ function Quotelist() {
   };
   let i = 0;
 
+  console.log("enquiryflwdata in quoet list page", enquiryflwdata);
 
+  useEffect(() => {
+    const uniqueCategory = new Set(
+      enquiryflwdata
+        .map((item) => item.enquirydata[0]?.category)
+        .filter(Boolean)
+    );
+    const uniqueCity = new Set(
+      enquiryflwdata.map((item) => item.enquirydata[0]?.city).filter(Boolean)
+    );
+    setDuplicateCategory(uniqueCategory);
+    setDuplicateCity(uniqueCity);
+  }, [enquiryflwdata]);
+
+  const gettingResponse = enquiryflwdata.map((ele) =>
+    ele.quotefollowup.map((item) => item.response)
+  );
+
+  // const filteringResponse = enquiryflwdata.map((ele) => ele.quotefollowup);
+  // const gettingResponse = filteringResponse.map((item) => item.response);
+
+  console.log("gettingResponse", gettingResponse);
 
   useEffect(() => {
     const filterResults = () => {
@@ -139,11 +162,11 @@ function Quotelist() {
             item.staffname.toLowerCase().includes(searchStaff.toLowerCase())
         );
       }
-      if (searchResponse) {
+      if (bookedBy) {
         results = results.filter(
           (item) =>
-            item.response &&
-            item.response.toLowerCase().includes(searchResponse.toLowerCase())
+            item.Bookedby &&
+            item.Bookedby.toLowerCase().includes(bookedBy.toLowerCase())
         );
       }
       if (searchDesc) {
@@ -177,10 +200,10 @@ function Quotelist() {
     searchAddress,
     searchReference,
     searchCity,
-
+    searchServices,
     searchExecutive,
     searchStaff,
-    searchResponse,
+    bookedBy,
     searchDesc,
     searchNxtfoll,
   ]);
@@ -308,31 +331,19 @@ function Quotelist() {
                     onChange={(e) => setSearchCatagory(e.target.value)}
                   >
                     <option value="">Select</option>
-                    {searchResults.map((e) => (
-                      <option
-                        value={e.enquirydata[0]?.category}
-                        key={e.enquirydata[0]?.category}
-                      >
-                        {e.enquirydata[0]?.category}{" "}
-                      </option>
+                    {[...duplicateCategory].map((category) => (
+                      <option key={category}>{category}</option>
                     ))}
                   </select>{" "}
                 </th>
+                <th scope="col" className="bor"></th>
                 <th scope="col" className="bor">
-                  {" "}
-                  <input
-                    className="vhs-table-input"
-                    // value={searchDateTime}
-                    // onChange={(e) => setSearchDateTime(e.target.value)}
-                  />{" "}
-                </th>
-                <th scope="col" className="bor">
-                  {" "}
+                  {/* {" "}
                   <input
                     className="vhs-table-input"
                     value={searchDateTime}
                     onChange={(e) => setSearchDateTime(e.target.value)}
-                  />{" "}
+                  />{" "} */}
                 </th>
                 <th scope="col" className="bor">
                   {" "}
@@ -352,11 +363,11 @@ function Quotelist() {
                 </th>
                 <th scope="col" className="bor">
                   {" "}
-                  <input
+                  {/* <input
                     className="vhs-table-input"
                     value={searchAddress}
                     onChange={(e) => setSearchAddress(e.target.value)}
-                  />{" "}
+                  />{" "} */}
                 </th>
                 <th scope="col" className="bor">
                   {" "}
@@ -365,13 +376,16 @@ function Quotelist() {
                     onChange={(e) => setSearchCity(e.target.value)}
                   >
                     <option value="">Select </option>
-                    {searchResults.map((e) => (
+                    {/* {searchResults.map((e) => (
                       <option
                         value={e.enquirydata[0]?.city}
                         key={e.enquirydata[0]?.city}
                       >
                         {e.enquirydata[0]?.city}{" "}
                       </option>
+                    ))} */}
+                    {[...duplicateCity].map((city) => (
+                      <option key={city}>{city}</option>
                     ))}
                   </select>{" "}
                 </th>
@@ -386,12 +400,13 @@ function Quotelist() {
 
                 <th scope="col" className="bor">
                   {" "}
-                  <input
+                  {/* <input
                     className="vhs-table-input"
                     value={searchTotal}
                     onChange={(e) => setsearchTotal(e.target.value)}
-                  />
+                  /> */}
                 </th>
+
                 <th scope="col" className="bor">
                   {" "}
                   <input
@@ -403,39 +418,42 @@ function Quotelist() {
                 <th scope="col" className="bor">
                   <input
                     className="vhs-table-input"
-                    value={searchResponse}
-                    onChange={(e) => setSearchResponse(e.target.value)}
+                    value={bookedBy}
+                    onChange={(e) => setbookedBy(e.target.value)}
                   />{" "}
                 </th>
 
                 <th scope="col" className="bor">
-                  <input
+                  {/* <input
                     className="vhs-table-input"
                     value={searchenquirydate}
                     onChange={(e) => setsearchenquirydate(e.target.value)}
-                  />{" "}
+                  />{" "} */}
                 </th>
 
                 <th scope="col" className="bor">
-                  <input
+                  {/* <input
                     className="vhs-table-input"
                     value={searchNxtfoll}
                     onChange={(e) => setSearchNxtfoll(e.target.value)}
-                  />{" "}
+                  />{" "} */}
                 </th>
                 <th scope="col" className="bor">
-                  <input
+                  {/* <input
                     className="vhs-table-input"
                     value={searchDesc}
                     onChange={(e) => setSearchDesc(e.target.value)}
-                  />{" "}
+                  />{" "} */}
                 </th>
                 <th scope="col" className="bor">
                   <select onChange={(e) => setType(e.target.value)}>
                     <option>Select </option>
-                    <option value="NOT SHARED">NOT SHARED </option>
+                    {gettingResponse.map((item) => (
+                      <option>{item} </option>
+                    ))}
+                    {/* <option value="NOT SHARED">NOT SHARED </option>
                     <option value="QUOTE SHARED">QUOTE SHARED </option>
-                    <option value="CONFIRMED">CONFIRMED </option>
+                    <option value="CONFIRMED">CONFIRMED </option> */}
                   </select>{" "}
                 </th>
               </tr>
@@ -524,7 +542,11 @@ function Quotelist() {
                 </tbody> */}
             <tbody>
               {currentItems.map((item, index) => (
-                <a key={index} onClick={() => click(item.enquirydata[0].EnquiryId)} className="tbl">
+                <a
+                  key={index}
+                  onClick={() => click(item.enquirydata[0].EnquiryId)}
+                  className="tbl"
+                >
                   <tr
                     className="trnew"
                     style={{ backgroundColor: calculateBackgroundColor(item) }}
@@ -541,7 +563,7 @@ function Quotelist() {
                     <td>{item?.enquirydata[0]?.contact1}</td>
                     <td>{item?.enquirydata[0]?.address}</td>
                     <td>{item?.enquirydata[0]?.city}</td>
-                    <td>{item?.enquirydata[0]?.intrestedfor}</td>
+                    <td>{item?.enquirydata[0]?.intrestedfor} </td>
                     <td>{item?.netTotal}</td>
                     <td>{item?.enquirydata[0]?.executive}</td>
                     <td>{item?.Bookedby}</td>

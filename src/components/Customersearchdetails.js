@@ -49,10 +49,10 @@ console.log("treatmentdata",treatmentdata)
   const [landmark, setLankmark] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
   const [serviceSlots, setServiceSlots] = useState([]);
-
+const [newAdd, setnewAdd] = useState(false)
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {setShow(true);setnewAdd(true)} ;
   const [show1, setShow1] = useState(false);
   const handleClose1 = () => setShow1(false);
   const handleShow1 = () => setShow1(true);
@@ -343,7 +343,7 @@ setCaddres(item)
   const addtreatmentdetails = async (e) => {
     e.preventDefault();
 
-    if (!contractType || !treatment || !selectedAddress) {
+    if (!contractType || !treatment ) {
       alert("Fill all feilds");
     } else {
       try {
@@ -377,9 +377,18 @@ setCaddres(item)
             
             serviceCharge: serviceCharge,
             dateofService: dateofService,
-            deliveryAddress: selectedAddress,
+            deliveryAddress:!newAdd? selectedAddress :{
+              
+                userId: customerdata[0]?._id,
+                address: Address,
+                saveAs: streetName,
+                landmark: landmark,
+
+                platNo: houseNumber,
+             
+            },
             desc: desc,
-            city: customerdata[0]?.city,
+            city: customerdata[0].city,
             serviceFrequency: serviceFrequency,
             startDate: dateofService,
             expiryDate: expiryDate,
@@ -491,7 +500,15 @@ setCaddres(item)
         };
         await axios(config).then(function (response) {
           if (response.status === 200) {
-            window.location.reload();
+            addtreatmentdetails(e); // Pass necessary arguments or event data if required
+            
+          
+            // Consider using a delay before reloading the window to ensure the user sees the alert
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000); // 1000 milliseconds delay (adjust as needed)
+          } else {
+            alert("Not Added"); // Notify the user about the failure
           }
         });
       } catch (error) {
@@ -1588,7 +1605,7 @@ setCaddres(item)
                   <div className="mt-2">
                     <input
                       type="radio"
-                      checked={selectedAddress ? selectedAddress ===item :Caddres === item}
+                      checked={ Caddres === item}
                       onChange={() => handleAddressSelect1(item)}
                       style={{ width: 40, fontSize: "20px", height: "20px" }}
                     />

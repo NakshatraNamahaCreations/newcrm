@@ -1955,6 +1955,7 @@ useEffect(() => {
       console.error("Error making API call:", error);
     }
   };
+  console.log("advpaymentdata[0]",advpaymentdata[0])
 
   return (
     <div className="web">
@@ -2015,6 +2016,14 @@ useEffect(() => {
                     Adv Payment Date :
                     {advpaymentdata[0]?.paymentDate
                       ? advpaymentdata[0]?.paymentDate
+                      : ""}
+                  </b>
+                </p>
+                <p>
+                  <b>
+                    Adv Payment mode :
+                    {advpaymentdata[0]?.paymentMode
+                      ? advpaymentdata[0]?.paymentMode
                       : ""}
                   </b>
                 </p>
@@ -2602,7 +2611,7 @@ useEffect(() => {
                         type="date"
                         className="col-md-12 vhs-input-value"
                         onChange={(e) => setPaymentDate(e.target.value)}
-                        value={moment().format("DD-MM-YYY")}
+                        value={moment().format("DD-MM-YYYY")}
                       />
                     </div>
                   </div>
