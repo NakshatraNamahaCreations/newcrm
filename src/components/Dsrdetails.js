@@ -199,42 +199,40 @@ function Dsrdetails() {
         headers: { "content-type": "application/json" },
         data: {
           serviceDate: data1,
-          serviceInfo:{
+          serviceInfo: {
+            _id: data._id,
+            customerData: data.customerData,
+            dCategory: data.dCategory,
+            cardNo: data.cardNo,
+            contractType: data.contractType,
+            service: data.service,
+            planName: data.planName,
+            slots: data.slots,
+            serviceId: data.serviceId,
+            serviceCharge: data.serviceCharge,
+            serviceDate:data.serviceDate,
+            desc: data.desc,
 
-            customerData:data.customerData,
-            dCategory:data.dCategory,
-            cardNo:data.cardNo,
-            contractType:data.contractType,
-            service:data.service,
-            planName:data.planName,
-            slots:data.slots, 
-            serviceId:data.serviceId,
-            serviceCharge:data.serviceCharge,
-       
-            desc:data.desc,
-         
-            category:data.category,
-            expiryDate:data.expiryDate,
-          
-            dividedDates:data.dividedDates,
-            dividedCharges:data.dividedCharges,
-            dividedamtDates:data.dividedamtDates,
-            dividedamtCharges:data.dividedamtCharges,
-            oneCommunity:data.oneCommunity,
-            communityId:data.communityId,
-            BackofficeExecutive:data.BackofficeExecutive,
-            deliveryAddress:data.deliveryAddress,
-            type:data.type,
-            userId:data.userId,
-            selectedSlotText:data.selectedSlotText,
-            AddOns:data.AddOns,
-            TotalAmt:data.TotalAmt,
-            GrandTotal:data.GrandTotal,
-          
-       
-            city:data.city,
-                  
-          } ,
+            category: data.category,
+            expiryDate: data.expiryDate,
+
+            dividedDates: data.dividedDates,
+            dividedCharges: data.dividedCharges,
+            dividedamtDates: data.dividedamtDates,
+            dividedamtCharges: data.dividedamtCharges,
+            oneCommunity: data.oneCommunity,
+            communityId: data.communityId,
+            BackofficeExecutive: data.BackofficeExecutive,
+            deliveryAddress: data.deliveryAddress,
+            type: data.type,
+            userId: data.userId,
+            selectedSlotText: data.selectedSlotText,
+            AddOns: data.AddOns,
+            TotalAmt: data.TotalAmt,
+            GrandTotal: data.GrandTotal,
+
+            city: data.city,
+          },
           serviceId: data?._id,
           cardNo: data.cardNo,
           category: data.category,
@@ -291,7 +289,40 @@ function Dsrdetails() {
         headers: { "content-type": "application/json" },
         data: {
           bookingDate: bookingDate,
-          serviceInfo: data,
+          serviceInfo: {
+            _id: data._id,
+            customerData: data.customerData,
+            dCategory: data.dCategory,
+            cardNo: data.cardNo,
+            contractType: data.contractType,
+            service: data.service,
+            planName: data.planName,
+            slots: data.slots,
+            serviceId: data.serviceId,
+            serviceCharge: data.serviceCharge,
+            serviceDate:data.serviceDate,
+            desc: data.desc,
+
+            category: data.category,
+            expiryDate: data.expiryDate,
+
+            dividedDates: data.dividedDates,
+            dividedCharges: data.dividedCharges,
+            dividedamtDates: data.dividedamtDates,
+            dividedamtCharges: data.dividedamtCharges,
+            oneCommunity: data.oneCommunity,
+            communityId: data.communityId,
+            BackofficeExecutive: data.BackofficeExecutive,
+            deliveryAddress: data.deliveryAddress,
+            type: data.type,
+            userId: data.userId,
+            selectedSlotText: data.selectedSlotText,
+            AddOns: data.AddOns,
+            TotalAmt: data.TotalAmt,
+            GrandTotal: data.GrandTotal,
+
+            city: data.city,
+          },
           jobCategory: jobCategory,
           complaintRef: data.complaintRef,
           priorityLevel: priorityLevel,
@@ -344,14 +375,13 @@ function Dsrdetails() {
 
   useEffect(() => {
     getreschdatauser();
-  }, [])
-  
-const [reshduleData, setreshduleData] = useState([]);
+  }, []);
+
+  const [reshduleData, setreshduleData] = useState([]);
   const getreschdatauser = async () => {
     let res = await axios.get(apiURL + `/filterwithserviceId/${data?._id}`);
     if (res.status === 200) {
-      setreshduleData(
-        res.data?.recheduledata)
+      setreshduleData(res.data?.recheduledata);
 
       // console.log(res.data?.service);
     }
@@ -489,7 +519,7 @@ const [reshduleData, setreshduleData] = useState([]);
 
     const invoiceUrl = `https://vijayhomeservicebengaluru.in/dsr_invoice_bill?id=${id}`;
 
-    console.log("invoiceUrl",invoiceUrl)
+    console.log("invoiceUrl", invoiceUrl);
     const invoiceLink = serivePrice.replace(
       /\{Invoice_link\}/g,
       `[Click to view invoice](${invoiceUrl})`
@@ -594,7 +624,7 @@ const [reshduleData, setreshduleData] = useState([]);
           setShow1(false);
           alert("Updated");
           window.location.assign(`/dsrcallist/${data1}/${data.category}`);
-        } 
+        }
       } catch (error) {
         if (error.response) {
           alert(`Server error: ${error.response.data.message}`);
@@ -649,7 +679,7 @@ const [reshduleData, setreshduleData] = useState([]);
     }
   };
 
-  const today = new Date().toISOString().split('T')[0]; 
+  const today = new Date().toISOString().split("T")[0];
   return (
     <div className="web">
       <Header />
@@ -711,8 +741,6 @@ const [reshduleData, setreshduleData] = useState([]);
                 <div className="col-md-4">
                   <div className="vhs-input-label">Appointment Time</div>
                   <div className="group pt-1">
-                 
-
                     <select
                       className="col-md-12 vhs-input-value"
                       onChange={(e) => {
@@ -743,8 +771,6 @@ const [reshduleData, setreshduleData] = useState([]);
                         ))
                       )}
                     </select>
-
-                 
                   </div>
                 </div>
                 <div className="col-md-4">
@@ -762,8 +788,6 @@ const [reshduleData, setreshduleData] = useState([]);
                         </option>
                       ))}
                     </select>
-
-         
                   </div>
                 </div>
               </div>
@@ -777,24 +801,24 @@ const [reshduleData, setreshduleData] = useState([]);
                         Reschedule date
                       </button>
                       {reshduleData ? (
-                        reshduleData.map((item)=>(
-
-        
-                        <div>
-                          <p style={{ color: "orange" }}>
-                            Rescheduled this services
-                          </p>
-                          <div style={{ fontWeight: "bold" }}>OPM Details</div>
-                          <p style={{ marginBottom: 0 }}>
-                            {item.name}
-                          </p>
-                          <p style={{ marginBottom: 0 }}>
-                            {item.number}
-                          </p>
-                          <p style={{ marginBottom: 0 }}>{item.reason}</p>
-                          <p>{(moment(item.createdAt).format("MMMM Do YYYY, h:mm:ss a"))}</p>
-                        </div>
-                                        ))
+                        reshduleData.map((item) => (
+                          <div>
+                            <p style={{ color: "orange" }}>
+                              Rescheduled this services
+                            </p>
+                            <div style={{ fontWeight: "bold" }}>
+                              OPM Details
+                            </div>
+                            <p style={{ marginBottom: 0 }}>{item.name}</p>
+                            <p style={{ marginBottom: 0 }}>{item.number}</p>
+                            <p style={{ marginBottom: 0 }}>{item.reason}</p>
+                            <p>
+                              {moment(item.createdAt).format(
+                                "MMMM Do YYYY, h:mm:ss a"
+                              )}
+                            </p>
+                          </div>
+                        ))
                       ) : (
                         <></>
                       )}

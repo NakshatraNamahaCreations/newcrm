@@ -23,7 +23,7 @@ function Dsrcallist() {
   const [searchJobType, setSearchJobType] = useState("");
   const [searchDesc, setSearchDesc] = useState("");
 
-
+  console.log("dsrdata1", dsrdata1);
   const [searchpaymentMode, setsearchpaymentMode] = useState("");
 
   useEffect(() => {
@@ -90,10 +90,8 @@ function Dsrcallist() {
         if (searchCity) {
           results = results.filter(
             (item) =>
-              item.customerData[0]?.city &&
-              item.customerData[0]?.city
-                .toLowerCase()
-                .includes(searchCity.toLowerCase())
+              item.city &&
+              item.city.toLowerCase().includes(searchCity.toLowerCase())
           );
         }
         if (searchAddress) {
@@ -186,19 +184,23 @@ function Dsrcallist() {
 
     return TTnameValue;
   };
+  useEffect(() => {
+    SERVICESTARTED();
+  }, []);
 
   const SERVICESTARTED = (service) => {
     const filterStartTime = dsrdata1.filter(
       (item) =>
-        item.serviceInfo[0]?._id === service._id && item.serviceDate == date
+        item.serviceInfo[0]?._id === service?._id && item?.serviceDate === date
     );
+
     return filterStartTime[0]?.startJobTime;
   };
 
   const SERVICECOMPLETED = (service) => {
     const filterStartTime = dsrdata1.filter(
       (item) =>
-        item.serviceInfo[0]?._id === service._id && item.serviceDate == date
+        item.serviceInfo[0]?._id === service?._id && item.serviceDate === date
     );
     return filterStartTime[0]?.endJobTime;
   };
@@ -206,7 +208,7 @@ function Dsrcallist() {
   const SERVICECOMPLETEDBYOP = (service) => {
     const filterStartTime = dsrdata1.filter(
       (item) =>
-        item.serviceInfo[0]?._id === service._id && item.serviceDate == date
+        item.serviceInfo[0]?._id === service?._id && item.serviceDate == date
     );
 
     return filterStartTime[0]?.jobComplete;
@@ -220,6 +222,13 @@ function Dsrcallist() {
     return filterStartTime[0]?.jobComplete;
   };
 
+  const SERVICEMode = (service) => {
+    const filterpaymentmde = dsrdata1.filter(
+      (item) => item.serviceInfo[0]?._id === service._id
+    );
+
+    return filterpaymentmde[0]?.paymentType;
+  };
   const returndata = (data) => {
     const dateToMatch = new Date(date);
     const matchingData = [];
@@ -497,7 +506,9 @@ function Dsrcallist() {
                   >
                     <td>{i++}</td>
                     {/* <td>{selectedData.category}</td> */}
-                    <td>{date}</td>
+                    <td>
+                      {date} 
+                    </td>
                     <td>{selectedData.selectedSlotText}</td>
 
                     <td>{selectedData.customerData[0]?.customerName}</td>
@@ -505,7 +516,7 @@ function Dsrcallist() {
                     {/* {selectedData.city ? (
                       <td>{selectedData.city}</td>
                     ) : ( */}
-                    <td>{selectedData.customerData[0]?.city}</td>
+                    <td>{selectedData?.city}</td>
                     {/* )} */}
                     <td>
                       {selectedData?.deliveryAddress
@@ -581,8 +592,12 @@ function Dsrcallist() {
                           : selectedData.serviceCharge}
                       </td>
                     )}
+                    {selectedData.type === "userapp" ? (
+                      <td>{selectedData.paymentMode}</td>
+                    ) : (
+                      <td>{SERVICEMode(selectedData)}</td>
+                    )}
 
-                    <td>{selectedData.paymentMode}</td>
                     <td>{selectedData.desc}</td>
                   </Link>
                 </tr>

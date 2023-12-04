@@ -204,7 +204,7 @@ function Paymentfilterlist() {
       };
       await axios(config).then(function (response) {
         if (response.status === 200) {
-          window.location.assign(`paymentfilterlist/${date}`);
+          window.location.assign(`/paymentfilterlist/${date}`);
         }
       });
     } catch (error) {
@@ -394,7 +394,7 @@ function Paymentfilterlist() {
                 <th
                   scope="col"
                   className="table-head"
-                  style={{ minWidth: "160px" }}
+                  style={{ minWidth: "200px" }}
                 >
                   Payment details
                 </th>
@@ -629,7 +629,7 @@ function Paymentfilterlist() {
                             {fddata(selectedData?._id).map((item, index) => (
                               <div>
                                 {item.jobComplete === "YES" ? (
-                                  <a onClick={() => confirm(selectedData?._id)}>
+                                  <a onClick={() => confirm(selectedData?._id)} >
                                     <p style={{ color: "orange" }}>Confirm</p>
                                   </a>
                                 ) : (

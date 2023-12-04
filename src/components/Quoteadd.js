@@ -32,7 +32,7 @@ function Quotelist() {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(25);
   // Get today's date
   const today = new Date();
   useEffect(() => {

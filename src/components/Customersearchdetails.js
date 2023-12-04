@@ -379,7 +379,7 @@ setCaddres(item)
             dateofService: dateofService,
             deliveryAddress: selectedAddress,
             desc: desc,
-            city: customerdata[0].city,
+            city: customerdata[0]?.city,
             serviceFrequency: serviceFrequency,
             startDate: dateofService,
             expiryDate: expiryDate,

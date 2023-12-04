@@ -1910,7 +1910,7 @@ useEffect(() => {
       data.serviceCharge
     );
 
-    const invoiceUrl = `https://vijayhomeservicebengaluru.in/quotations?id=${EnquiryId}`;
+    const invoiceUrl = `http://vijayhomeservicebengaluru.in/quotations?id=${EnquiryId}`;
 
 
     const invoiceLink = serivePrice.replace(
