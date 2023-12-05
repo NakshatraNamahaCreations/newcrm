@@ -47,6 +47,7 @@ function Paymentfilterlist() {
     }
   };
 
+  
   useEffect(() => {
     getAlldata();
   }, [treatmentData]);
@@ -258,8 +259,7 @@ function Paymentfilterlist() {
         0
       );
 
-      console.log("Matching payments:", matchingPayments);
-      console.log("Subtotal:", subtotal);
+    
 
       return total + subtotal;
     }, 0);

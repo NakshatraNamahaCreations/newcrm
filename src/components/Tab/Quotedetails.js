@@ -1752,6 +1752,7 @@ useEffect(() => {
 
 
   const postconvertcustomer = async (e) => {
+
     e.preventDefault();
     try {
       const phoneNumber = enquirydata[0]?.contact1;
@@ -1766,12 +1767,14 @@ useEffect(() => {
          
     
         }
-      } else {
-        console.log('Phone number not available');
-        navigate(`/convertcustomer/${enquirydata[0]?.EnquiryId}`);
-      }
+        else {
+          console.log('Phone number not available');
+          navigate(`/convertcustomer/${enquirydata[0]?.EnquiryId}`);
+        }
+      } 
     } catch (error) {
       console.error("Error fetching customer:", error);
+      navigate(`/convertcustomer/${enquirydata[0]?.EnquiryId}`);
       // Handle errors accordingly
     }
   };
@@ -1791,7 +1794,7 @@ useEffect(() => {
         baseURL: apiURL,
         headers: { "content-type": "application/json" },
         data: {
-          paymentDate: moment().format("DD-MM-YYY"),
+          paymentDate: moment().format("DD-MM-YYYY"),
 
           paymentMode: paymentMode,
           amount: paymentAmount,

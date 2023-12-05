@@ -52,7 +52,7 @@ function Surveycategory() {
     let res = await axios.get(apiURL + "/getsurveydata");
     if (res.status === 200) {
       setsurveycatagoryData(res.data?.enquiryfollowup);
-      console.log("survey data====", res.data?.enquiryfollowup);
+
     }
   };
 

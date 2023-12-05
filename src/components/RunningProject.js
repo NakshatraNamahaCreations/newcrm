@@ -4,14 +4,6 @@ import axios from "axios";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
-const active = {
-  backgroundColor: "rgb(169, 4, 46)",
-  color: "#fff",
-  fontWeight: "bold",
-  border: "none",
-};
-const inactive = { color: "black", backgroundColor: "white" };
-
 function RunningProject() {
   const apiURL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
@@ -91,17 +83,14 @@ function RunningProject() {
   }, [category]);
 
   const getservicedata = async () => {
-    let res = await axios.get(apiURL + "/getrunningdata");
+    let res = await axios.get(apiURL + "/getfilterrunningdata");
     if (res.status === 200) {
-      const filteredData = res.data?.runningdata.filter(
-        (i) => i.contractType === "AMC" && !i.closeProject
-      );
+      const filteredData = res.data?.runningdata.filter((i) => !i.closeProject);
+
       settreatmentData(filteredData);
       setSearchResults(filteredData);
     }
   };
-
-  console.log("treatment=======", treatmentdata);
 
   // const getservicedata = async () => {
   //   let res = await axios.get(apiURL + "/getrunningdata");
@@ -138,7 +127,7 @@ function RunningProject() {
       await axios(config);
       // Remove the closed row from the state
       const updatedData = treatmentdata.filter((item) => item._id !== id);
-      console.log("updatedData", updatedData);
+
       settreatmentData(updatedData);
       alert("Updated");
       // Reload the page
@@ -398,9 +387,12 @@ function RunningProject() {
       <div className="row m-auto" style={{ width: "100%" }}>
         <div className="col-md-12">
           <>
-            <table  class=" table-bordered mt-1">
+            <table class=" table-bordered mt-1">
               <thead className="">
-                <tr  className="table-secondary" style={{background:"lightgrey"}}>
+                <tr
+                  className="table-secondary"
+                  style={{ background: "lightgrey" }}
+                >
                   <th scope="col"></th>
                   <th scope="col">
                     <input
@@ -542,21 +534,16 @@ function RunningProject() {
                         onChange={(e) => setType(e.target.value)}
                       /> */}
                   </th>
-                  <th scope="col">
-                   
-                  </th>
-                  <th scope="col">
-                   
-                   </th>
-                   <th scope="col">
-                   
-                   </th>
-                   <th scope="col">
-                   
-                   </th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
                 </tr>
 
-                <tr className="table-secondary" style={{background:"lightgrey"}}>
+                <tr
+                  className="table-secondary"
+                  style={{ background: "lightgrey" }}
+                >
                   <th className="table-head" scope="col">
                     Sr.No
                   </th>
@@ -616,9 +603,6 @@ function RunningProject() {
                   >
                     Payment
                   </th>
-                  <th scope="col" className="table-head">
-                    TYPE
-                  </th>
 
                   <th scope="col" className="table-head">
                     Man Power
@@ -627,7 +611,9 @@ function RunningProject() {
                   <th scope="col" className="table-head">
                     Material
                   </th>
-
+                  <th scope="col" className="table-head">
+                    TYPE
+                  </th>
                   <th scope="col" className="table-head">
                     Deep Clean Details
                   </th>
@@ -660,7 +646,7 @@ function RunningProject() {
                     <td>{item.customerData[0]?.customerName}</td>
                     <td>{item.customerData[0]?.mainContact}</td>
                     <td>
-                      {item.type === "userapp" && item.deliveryAddress ? (
+                      {item.deliveryAddress ? (
                         <>
                           {item.deliveryAddress.platNo},{" "}
                           {item.deliveryAddress.address} -{" "}
@@ -674,13 +660,13 @@ function RunningProject() {
                         </>
                       )}
                     </td>
-                    <td>{item.customerData[0]?.city}</td>
+                    <td>{item?.city}</td>
                     <td>{item.quotedata[0]?.quoteId}</td>
                     <td>{item.desc}</td>
                     <td>{item.dsrdata[0]?.daytoComplete}</td>
                     <td>{item.dsrdata[0]?.workerName}</td>
                     <td>
-                      {item.paymentData.some(
+                      {/* {item.paymentData.some(
                         (i) =>
                           i.paymentType === "Vendor" && i.serviceId === item._id
                       ) ? (
@@ -697,7 +683,10 @@ function RunningProject() {
                         </div>
                       ) : (
                         <p>0.0</p>
-                      )}
+                      )} */}
+                      {item.dsrdata[0]?.workerAmount
+                        ? item.dsrdata[0]?.workerAmount
+                        : 0}
                     </td>
                     <td>
                       {item.paymentData.some(
@@ -787,18 +776,6 @@ function RunningProject() {
                     </td>
 
                     <td>
-                      <div
-                        
-                      >
-                        {item.dsrdata[0]?.jobComplete === "YES"
-                          ? "CLOSED BY PROJECT MANAGER"
-                          : item.dsrdata[0]?.deepcleaningstart === "start"
-                          ? "BOOK FOR DEEP CLEANING"
-                          : "RUNNING PROJECTS"}
-                      </div>
-                    </td>
-
-                    <td>
                       {item.manpowerdata.map((item) => (
                         <>
                           <div>{item.mandate}</div>
@@ -820,7 +797,15 @@ function RunningProject() {
                         </>
                       ))}
                     </td>
-
+                    <td>
+                      <div>
+                        {item.dsrdata[0]?.jobComplete === "YES"
+                          ? "CLOSED BY PROJECT MANAGER"
+                          : item.dsrdata[0]?.deepcleaningstart === "start"
+                          ? "BOOK FOR DEEP CLEANING"
+                          : "RUNNING PROJECTS"}
+                      </div>
+                    </td>
                     <td>
                       <div>{item.dsrdata[0]?.deepcleaningnote}</div>
                     </td>

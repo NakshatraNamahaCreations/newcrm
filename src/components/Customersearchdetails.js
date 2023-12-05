@@ -27,7 +27,7 @@ function Customersearchdetails() {
   const [treatment, settreatment] = useState("");
   const [oneCommunity, setOneCommunity] = useState({}); //string to obj
   const [treatmentdata, settreatmentdata] = useState([]);
-console.log("treatmentdata",treatmentdata)
+
   const [customerdata, setcustomerdata] = useState([]);
   const [servicedata, setservicedata] = useState([]);
   const [editenable, seteditEnable] = useState(false);
@@ -374,7 +374,7 @@ setCaddres(item)
             serviceID: serviceId,
             slots: selectedSlot,
             selectedSlotText: selectedSlot,
-            
+            EnquiryId:customerdata[0]?.EnquiryId,
             serviceCharge: serviceCharge,
             dateofService: dateofService,
             deliveryAddress:!newAdd? selectedAddress :{
@@ -404,7 +404,7 @@ setCaddres(item)
         if (whatsappdata.length > 0) {
           // Assuming you want the first item from whatsappdata for the API call
           const selectedResponse = whatsappdata[0];
-          // makeApiCall(selectedResponse, customerdata[0]?.mainContact);
+          makeApiCall(selectedResponse, customerdata[0]?.mainContact);
 
           await axios(config).then(function (response) {
             if (response.status === 200) {

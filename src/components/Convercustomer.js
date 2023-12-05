@@ -19,7 +19,7 @@ function Convertcustomer() {
   const [gst, setgst] = useState("");
   const [rbhf, setrbhf] = useState("");
   const [cnap, setcnap] = useState("");
-  const [lnf, setlnf] = useState("");
+  const [lnf, setlnf] = useState(data[0]?.address);
   const [mainarea, setarea] = useState("");
   const [city, setcity] = useState(data[0]?.city);
   const [pincode, setpincode] = useState("");
@@ -309,6 +309,7 @@ function Convertcustomer() {
                         rows={4}
                         cols={6}
                         className="col-md-12 vhs-input-value"
+                        defaultValue={data[0]?.address}
                         onChange={(e) => setlnf(e.target.value)}
                       />
                     </div>

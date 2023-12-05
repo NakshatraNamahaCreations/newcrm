@@ -21,16 +21,12 @@ function Closeproject() {
   }, []);
 
   const getAlldsr = async () => {
-    let res = await axios.get(apiURL + "/getrunningdata");
+    let res = await axios.get(apiURL + "/getfilterrunningdata");
     if (res.status === 200) {
-      setdata(
-        res.data.runningdata.filter(
-          (i) => i.contractType === "AMC" && i.closeProject === "closed"
-        )
-      );
+      setdata(res.data.runningdata.filter((i) => i.closeProject === "closed"));
     }
   };
-  console.log(data);
+
   return (
     <div className="web">
       <Header />
@@ -123,14 +119,23 @@ function Closeproject() {
                 <tr className="user-tbale-body">
                   <td>{index + 1}</td>
                   <td>{item.closeDate}</td>
-                  <td>{item.dsrdata[0]?.techName}</td>
+                  <td>{item.dsrdata[0]?.TechorPMorVendorName}</td>
                   <td>{item.quotedata[0]?.salesExecutive}</td>
                   <td> {item.customerData[0]?.customerName}</td>
                   <td> {item.customerData[0]?.mainContact}</td>
                   <td>
-                    {item.customerData[0]?.rbhf} {" "} {item.customerData[0]?.lnf} {" "}
-                    {item.customerData[0]?.cnap} - {" "} 
-                    {item.customerData[0]?.pinCode}
+                    {item.deliveryAddress ? (
+                      <>
+                        {item.deliveryAddress.platNo},{" "}
+                        {item.deliveryAddress.address} -{" "}
+                        {item.deliveryAddress.landmark}
+                      </>
+                    ) : (
+                      <>
+                        {item.customerData[0]?.lnf},{item.customerData[0]?.rbhf}
+                        ,{item.customerData[0]?.cnap},
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

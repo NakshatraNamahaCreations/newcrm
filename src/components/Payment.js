@@ -58,7 +58,7 @@ function Payment() {
         baseURL: apiURL,
         headers: { "content-type": "application/json" },
         data: {
-          paymentDate: paymentDate,
+          paymentDate: moment().format("DD-MM-YYYY"),
           paymentType: paymentType,
           paymentMode: paymentMode,
           amount: paymentAmount,

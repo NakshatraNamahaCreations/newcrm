@@ -173,13 +173,24 @@ function Dsrdetails() {
     settype(event.target.value);
   };
 
-  const handleTechNameChange = (event) => {
-    const selectedTech = techniciandata.find(
-      (item) => item._id === event.target.value
-    );
-    setSelectedTechId(event.target.value); // Set the selected ID
-    setSelectedTechName(selectedTech ? selectedTech.vhsname : ""); // Set the selected name
-  };
+const handleTechNameChange = (event) => {
+  const selectedTech = techniciandata.find(
+    (item) => item._id === event.target.value
+  );
+
+  setSelectedTechId(event.target.value);
+  
+  if (type === "technician") {
+    setSelectedTechName(selectedTech ? selectedTech.vhsname : "");
+  } else if (type === "PM") {
+    const selectedPM = PMdata.find((item) => item._id === event.target.value);
+    setSelectedTechName(selectedPM ? selectedPM.vhsname : "");
+  } else if (type === "Vendor") {
+    const selectedVendor = vendordata.find((item) => item._id === event.target.value);
+    setSelectedTechName(selectedVendor ? selectedVendor.vhsname : "");
+  }
+};
+
 
   const checking = () => {
     if (jobComplete === "CANCEL") {
